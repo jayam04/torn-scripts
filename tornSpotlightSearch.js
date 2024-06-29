@@ -5,7 +5,7 @@
 // @description  Navigate Torn Faster
 // @author       Jayam Patel
 // @match        https://www.torn.com/*
-// @icon         https://raw.githubusercontent.com/jayam04/torn-scripts/master/tornSpotlightSearchIcon.png`
+// @icon         https://raw.githubusercontent.com/jayam04/torn-scripts/master/tornSpotlightSearchIcon.png
 // @grant        none
 // ==/UserScript==
 
@@ -45,8 +45,63 @@ const urlDictionary = {
     Logs: "/page.php?sid=log",
     Pharmacy: "/shops.php?step=pharmacy",
 
-    "Cracking (Crimes)": "loader.php?sid=crimes#/cracking"
+    "Cracking (Crimes)": "loader.php?sid=crimes#/cracking",
 };
+
+// Add styles
+const spotlightStyle = `
+    list-style: none;
+    font: inherit;
+    font-size: 12px;
+    font-style: italic;
+    vertical-align: middle;
+    border: 0;
+    text-shadow: none;
+    background: linear-gradient(0deg,#111,#000);
+    border-radius: 5px;
+    box-shadow: 0 1px 0 hsla(0,0%,100%,.102);
+    box-sizing: border-box;
+    color: #9f9f9f;
+    display: inline;
+    font-weight: 400;
+    height: 24px;
+    margin: 0;
+    outline: none;
+    padding: 0 25px 0 10px;
+    width: 100%;
+    line-height: 26px;
+    padding-right: 26px;
+    `;
+
+const suggestionsStyle = `
+    text-shadow: 0 1px 0 #333;
+    list-style: none;
+    scrollbar-color: #666 #333;
+    margin: 0;
+    border: 0;
+    font: inherit;
+    vertical-align: baseline;
+    text-decoration: none;
+    color: #ccc;
+    cursor: pointer;
+    display: block;
+    font-size: 12px;
+    line-height: 18px;
+    padding: 4px 10px;
+    background: #333;
+    `;
+
+const suggestionBoxStyle = `
+    text-shadow: 0 1px 0 #333;
+    list-style: none;
+    color: #666;
+    scrollbar-color: #666 #333;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    vertical-align: baseline;
+    `;
 
 const spotlightDiv = document.createElement("div");
 spotlightDiv.style.zIndex = 100000000000000;
@@ -60,6 +115,7 @@ const spotlight = document.createElement("input");
 spotlight.setAttribute("type", "text");
 spotlight.setAttribute("id", "spotlight");
 spotlight.setAttribute("placeholder", "Search");
+spotlight.style = spotlightStyle;
 spotlight.style.width = "100%";
 spotlight.style.visibility = "hidden";
 
@@ -88,6 +144,9 @@ function KeyPress(e) {
 
 function setupAutocomplete(inputElement) {
     let currentFocus;
+    const autocompleteBox = document.createElement("div");
+    autocompleteBox.style = suggestionBoxStyle;
+    spotlightDiv.appendChild(autocompleteBox);
     inputElement.addEventListener("input", function (e) {
         closeAllLists();
         console.log("Autocomplete input event fired", this.value);
@@ -95,10 +154,11 @@ function setupAutocomplete(inputElement) {
         const autocompleteList = document.createElement("div");
         autocompleteList.setAttribute("id", this.id + "-autocomplete-list");
         autocompleteList.setAttribute("class", "autocomplete-items");
-        autocompleteList.style.background = "#f9f9f9";
-        autocompleteList.style.width = "100%";
-        autocompleteList.style.color = "#212529";
-        this.parentNode.appendChild(autocompleteList);
+        autocompleteList.style = suggestionsStyle;
+        // autocompleteList.style.background = "#f9f9f9";
+        // autocompleteList.style.width = "100%";
+        // autocompleteList.style.color = "#212529";
+        autocompleteBox.appendChild(autocompleteList);
 
         const sortedKeys = Object.keys(urlDictionary).sort((a, b) => {
             const aIndex = a.toLowerCase().indexOf(this.value.toLowerCase());
