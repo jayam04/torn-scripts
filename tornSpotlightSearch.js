@@ -5,7 +5,7 @@
 // @description  Navigate Torn Faster
 // @author       Jayam Patel
 // @match        https://www.torn.com/*
-// @icon         https://ibb.co/88qx9g7
+// @icon         https://raw.githubusercontent.com/jayam04/torn-scripts/master/tornSpotlightSearchIcon.png`
 // @grant        none
 // ==/UserScript==
 
