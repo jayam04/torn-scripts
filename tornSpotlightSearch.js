@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         Torn Spotlight Search
 // @namespace    http://tampermonkey.net/
-// @version      beta-1.0
+// @version      beta-1.1
 // @description  Navigate Torn Faster
 // @author       Jayam Patel
 // @match        https://www.torn.com/*
 // @icon         https://raw.githubusercontent.com/jayam04/torn-scripts/master/tornSpotlightSearchIcon.png
+// @license      Apache License 2.0
 // @grant        none
 // ==/UserScript==
 
