@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Torn Spotlight
+// @name         Torn Spotlight Search
 // @namespace    http://tampermonkey.net/
 // @version      beta-1.0
 // @description  Navigate Torn Faster
@@ -44,6 +44,8 @@ const urlDictionary = {
     Raceway: "/page.php?sid=racing",
     Logs: "/page.php?sid=log",
     Pharmacy: "/shops.php?step=pharmacy",
+
+    "Cracking (Crimes)": "loader.php?sid=crimes#/cracking"
 };
 
 const spotlightDiv = document.createElement("div");
