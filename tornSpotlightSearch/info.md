@@ -2,6 +2,8 @@
 
 Navigate Torn with keyboard shortcuts via Spotlight Search.
 
+![torn-spotlight-search](promo_short.gif)
+
 ## Configuration
 
 1. Change `mainKey` to your preffered key.
