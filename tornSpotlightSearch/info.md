@@ -2,7 +2,7 @@
 
 Navigate Torn with keyboard shortcuts via Spotlight Search.
 
-![torn-spotlight-search](promo_short.gif)
+![torn-spotlight-search](https://raw.githubusercontent.com/jayam04/torn-scripts/master/tornSpotlightSearch/promo_short.gif)
 
 ## Configuration
 
