@@ -1,56 +1,172 @@
 // ==UserScript==
 // @name         Torn Spotlight Search
 // @namespace    http://tampermonkey.net/
-// @version      beta-1.1
+// @version      beta-2.0
 // @description  Navigate Torn Faster
 // @author       Jayam Patel
 // @match        https://www.torn.com/*
+// @match        https://yata.yt/*
 // @icon         https://raw.githubusercontent.com/jayam04/torn-scripts/master/tornSpotlightSearch/icon.png
 // @license      Apache License 2.0
 // @grant        none
 // ==/UserScript==
 
 
+// Default Settings
+const DEFAULT_MAIN_SPOTLIGHT_KEY_COMBINATION = "Ctrl+Shift+K";
+const DEFAULT_MARKET_KEY_COMBINATION = "Ctrl+M";
+
+
 // Key Combinations
-const storedSpotlightTrigger = loadSetting("spotlightTrigger", "K+Ctrl+Shift");
+const storedSpotlightTrigger = loadSetting("spotlightTrigger", DEFAULT_MAIN_SPOTLIGHT_KEY_COMBINATION);
 const [mainKey, ...modifiers] = storedSpotlightTrigger.split("+").reverse();
 const pressControlKey = modifiers.includes("Ctrl");
 const pressAltKey = modifiers.includes("Alt");
 const pressShiftKey = modifiers.includes("Shift");
 
 // Define your dictionary of keys and URLs
-const urlDictionary = {
-    Awards: "/awards.php",
-    Bank: "/bank.php",
-    Bazaar: "/bazaar.php",
-    Calendar: "/calendar.php",
-    Casino: "/casino.php",
-    Crimes: "/crimes.php",
-    Items: "/item.php",
-    "Item Market": "/imarket.php",
-    Gym: "/gym.php",
-    Hospital: "/hospitalview.php",
-    Home: "index.php",
-    Jail: "/jailview.php",
-    Job: "/job.php",
-    Market: "/market.php",
-    Messages: "/messages.php",
-    Newspaper: "/newspaper.php",
-    Properties: "properties.php",
-    Travel: "/travelagency.php",
-    Forums: "/forums.php",
-    Faction: "/factions.php?step=your",
-    Missions: "/loader.php?sid=missions",
-    "Hall of Fame": "/page.php?sid=hof",
-    Education: "/page.php?sid=education",
-    Events: "/page.php?sid=events",
-    Raceway: "/page.php?sid=racing",
-    Logs: "/page.php?sid=log",
-    Pharmacy: "/shops.php?step=pharmacy",
+let 
 
-    "Cracking (Crimes)": "loader.php?sid=crimes#/cracking",
+urlDictionary = {
+    "Home": "https://www.torn.com/",
+    "Wiki": "https://www.torn.com/wiki/Argentina",
+    "Rules": "https://www.torn.com/rules.php",
+    "Forums": "https://www.torn.com/forums.php",
+    "Discord": "https://www.torn.com/discord",
+    "Staff": "https://www.torn.com/staff.php",
+    "Credits": "https://www.torn.com/credits.php",
+    "Settings": "https://www.torn.com/preferences.php",
+    "Logout": "https://www.torn.com/logout.php",
+    "Merits": "https://www.torn.com/awards.php#/merits",
+    "Education": "https://www.torn.com/page.php?sid=education",
+    "Loan Shark": "https://www.torn.com/loan.php",
+    "Item Market": "https://www.torn.com/imarket.php",
+    "Torn City": "https://www.torn.com/city.php#",
+    "Messages": "https://www.torn.com/messages.php",
+    "Events": "https://www.torn.com/page.php?sid=events",
+    "Awards": "https://www.torn.com/awards.php",
+    "Job": "https://www.torn.com/jobs.php",
+    "Missions": "https://www.torn.com/loader.php?sid=missions",
+    "Newspaper": "https://www.torn.com/newspaper.php",
+    "Hall of Fame": "https://www.torn.com/page.php?sid=hof",
+    "My Faction": "https://www.torn.com/factions.php?step=your",
+    "Logs": "https://www.torn.com/page.php?sid=log",
+    "Recruit Citizens": "https://www.torn.com/bringafriend.php",
+    "Weapon Mods": "https://www.torn.com/loader.php?sid=itemsMods",
+    "Calendar": "https://www.torn.com/calendar.php",
+    "Friends": "https://www.torn.com/friendlist.php",
+    "Enemies": "https://www.torn.com/blacklist.php",
+    "Points Store": "https://www.torn.com/points.php",
+    "Faction": "https://www.torn.com/factions.php?step=your",
+    "(Casino) Russian Roulette": "https://www.torn.com/page.php?sid=russianRoulette",
+    "(Casino) Slots": "https://www.torn.com/page.php?sid=slots",
+    "(Casino) Roulette": "https://www.torn.com/page.php?sid=roulette",
+    "(Casino) Poker": "https://www.torn.com/page.php?sid=holdem",
+    "(Casino) High Low": "https://www.torn.com/page.php?sid=highlow",
+    "(Casino) Blackjack": "https://www.torn.com/page.php?sid=blackjack",
+    "(Casino) Bookie": "https://www.torn.com/page.php?sid=bookie",
+    "(Casino) Lottery": "https://www.torn.com/page.php?sid=lottery",
+    "Craps": "https://www.torn.com/page.php?sid=craps",
+    "(Faction) Forum": "https://www.torn.com/forums.php#/p=forums&f=999&b=1&a=1149",
+    "(Faction) Warfare": "https://www.torn.com/page.php?sid=factionWarfare",
+    "Bits 'n' Bobs": "https://www.torn.com/shops.php?step=bitsnbobs",
+    "Bounties": "https://www.torn.com/bounties.php",
+    "Chronicle Archives": "https://www.torn.com/archives.php",
+    "Classified Ads": "https://www.torn.com/newspaper_class.php",
+    "Docks": "https://www.torn.com/shops.php?step=docks",
+    "Jewelry Store": "https://www.torn.com/shops.php?step=jewelry",
+    "Cyber Force": "https://www.torn.com/shops.php?step=cyberforce",
+    "Big Al's Gun Shop": "https://www.torn.com/bigalgunshop.php",
+    "Museum": "https://www.torn.com/museum.php",
+    "Print Store": "https://www.torn.com/shops.php?step=printstore",
+    "Organized Crimes": "https://www.torn.com/factions.php?step=your#/tab=crimes",
+    "(Faction) Controls": "https://www.torn.com/factions.php?step=your#/tab=controls",
+    "TC Clothing": "https://www.torn.com/shops.php?step=clothes",
+    "Sweet Shop": "https://www.torn.com/shops.php?step=candy",
+    "Post Office": "https://www.torn.com/shops.php?step=postoffice",
+    "Pawn Shop": "https://www.torn.com/shops.php?step=pawnshop",
+    "Big Al's Bunker": "https://www.torn.com/page.php?sid=bunker",
+    "Stock Market": "https://www.torn.com/page.php?sid=stocks",
+    "Church": "https://www.torn.com/church.php",
+    "Company Funds": "https://www.torn.com/companies.php#/option=funds",
+    "Manage Display Case": "https://www.torn.com/displaycase.php#manage",
+    "Trades": "https://www.torn.com/trade.php",
+    "Display Case": "https://www.torn.com/displaycase.php",
+    "Ammo Locker": "https://www.torn.com/page.php?sid=ammo",
+    "Donator House": "https://www.torn.com/donator.php",
+    "City Hall": "https://www.torn.com/citystats.php",
+    "Points Market": "https://www.torn.com/pmarket.php",
+    "Auction House": "https://www.torn.com/amarket.php",
+    "Dump": "https://www.torn.com/dump.php",
+    "Points Building": "https://www.torn.com/points.php",
+    "Home": "https://www.torn.com/index.php",
+    "Properties": "https://www.torn.com/properties.php",
+    "Travel Agency": "https://www.torn.com/travelagency.php",
+    "Items": "https://www.torn.com/item.php",
+    "City": "https://www.torn.com/city.php",
+    "Bazaar": "https://www.torn.com/bazaar.php",
+    "Gym": "https://www.torn.com/gym.php",
+    "Crimes": "https://www.torn.com/crimes.php#/step=main",
+    "Raceway": "https://www.torn.com/page.php?sid=racing",
+    "Jail": "https://www.torn.com/jailview.php",
+    "Hospital": "https://www.torn.com/hospitalview.php",
+    "City Bank": "https://www.torn.com/bank.php",
+    "Casino": "https://www.torn.com/casino.php",
+    "Log": "https://www.torn.com/page.php?sid=log",
+    "Pharmacy": "https://www.torn.com/shops.php?step=pharmacy",
+    "Nikeh Sports": "https://www.torn.com/shops.php?step=nikeh",
+    "Personal Stats": "https://www.torn.com/personalstats.php",
+    "Property Vault": "https://www.torn.com/properties.php#/p=options&tab=vault",
+    "Manage Bazaar": "https://www.torn.com/bazaar.php#/manage",
+    "Visitors Center": "https://www.torn.com/wiki",
+    "Estate Agents": "https://www.torn.com/estateagents.php",
+    "Recycling Center": "https://www.torn.com/shops.php?step=recyclingcenter",
+    "Super Store": "https://www.torn.com/shops.php?step=super",
+    "Token Shop": "https://www.torn.com/token_shop.php",
+    "Faction Armory": "https://www.torn.com/factions.php?step=your#/tab=armoury",
+    "Keno": "https://www.torn.com/page.php?sid=keno",
+    "Bugs & Issues": "https://www.torn.com/forums.php#/p=forums&f=19",
+    "Spin the Wheel": "https://www.torn.com/page.php?sid=spinTheWheel",
+    "Company": "https://www.torn.com/companies.php",
+    "Spotlight Settings": "https://www.torn.com/spotlight-settings.php",
+}
+
+let marketItems = {
+    "Xanax": "xanax",
 };
 
+
+function addStylesAndFonts() {
+    // Add Bootstrap CSS
+    const bootstrapLink = document.createElement('link');
+    bootstrapLink.rel = 'stylesheet';
+    bootstrapLink.href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css';
+    document.head.appendChild(bootstrapLink);
+
+    // Add Google Fonts
+    const fontLink = document.createElement('link');
+    fontLink.rel = 'stylesheet';
+    fontLink.href = 'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;700&display=swap';
+    document.head.appendChild(fontLink);
+
+    // Add custom styles
+    const style = document.createElement('style');
+    style.textContent = `
+        body {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            background-color: #f8f9fa;
+        }
+        h1, h3 {
+            font-weight: 700;
+        }
+        .custom-combo {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    `;
+    document.head.appendChild(style);
+}
 function createOverlay() {
     const overlay = document.createElement("div");
     overlay.id = "spotlight-overlay";
@@ -132,120 +248,50 @@ function showSpotlight(dictionary, onSelect) {
     });
 }
 
-// function KeyPress(e) {
-//     var evtobj = window.event ? event : e;
-//     const pageBindings = loadSetting('pageBindings', {});
-//     const marketSearch = loadSetting('marketSearch', 'M+Ctrl');
-//     const marketSearchUrl = loadSetting('marketSearchUrl', 'https://www.torn.com/imarket.php#/p=shop&step=shop&type=&searchname={q}');
-
-//     // Check for spotlight trigger
-//     if (
-//         evtobj.ctrlKey == pressControlKey &&
-//         evtobj.altKey == pressAltKey &&
-//         evtobj.shiftKey == pressShiftKey &&
-//         evtobj.key.toUpperCase() == mainKey
-//     ) {
-//         console.log("Spotlight activated");
-//         spotlight.style.visibility = "visible";
-//         spotlight.value = "";
-//         overlay.style.display = "block"; // Show overlay
-//         spotlight.focus();
-
-//         setupAutocomplete(spotlight);
-
-//         // Trigger input event to show all suggestions
-//         spotlight.dispatchEvent(new Event("input"));
-//     }
-//     // Check for page-specific bindings
-//     for (const [page, binding] of Object.entries(pageBindings)) {
-//         const [pageKey, ...pageModifiers] = binding.split('+').reverse();
-//         if (
-//             evtobj.ctrlKey == pageModifiers.includes('Ctrl') &&
-//             evtobj.altKey == pageModifiers.includes('Alt') &&
-//             evtobj.shiftKey == pageModifiers.includes('Shift') &&
-//             evtobj.key.toUpperCase() == pageKey
-//         ) {
-//             window.location.href = urlDictionary[page];
-//             return;
-//         }
-//     }
-
-//     // Check for market search
-//     const [marketKey, ...marketModifiers] = marketSearch.split('+').reverse();
-//     if (
-//         evtobj.ctrlKey == marketModifiers.includes('Ctrl') &&
-//         evtobj.altKey == marketModifiers.includes('Alt') &&
-//         evtobj.shiftKey == marketModifiers.includes('Shift') &&
-//         evtobj.key.toUpperCase() == marketKey
-//     ) {
-//         const query = prompt('Enter market search query:');
-//         if (query) {
-//             window.location.href = marketSearchUrl.replace('{q}', encodeURIComponent(query));
-//         }
-//     }
-// }
-
 function KeyPress(e) {
     var evtobj = window.event ? event : e;
-    const pageBindings = loadSetting("pageBindings", {});
-    const marketSearch = loadSetting("marketSearch", "M+Ctrl");
-    const marketSearchUrl = loadSetting(
-        "marketSearchUrl",
-        "https://www.torn.com/imarket.php#/p=shop&step=shop&type=&searchname={q}"
-    );
+    const mainSpotlight = loadSetting('mainSpotlight', DEFAULT_MAIN_SPOTLIGHT_KEY_COMBINATION);
+    const marketSpotlight = loadSetting('marketSpotlight', DEFAULT_MARKET_KEY_COMBINATION);
+    const customCombinations = loadSetting('customCombinations', {});
 
-    // Check for spotlight trigger
-    if (
-        evtobj.ctrlKey == pressControlKey &&
-        evtobj.altKey == pressAltKey &&
-        evtobj.shiftKey == pressShiftKey &&
-        evtobj.key.toUpperCase() == mainKey
-    ) {
+    function checkKeyCombo(combo) {
+        const [key, ...modifiers] = combo.split('+').reverse();
+        return evtobj.ctrlKey === modifiers.includes('Ctrl') &&
+               evtobj.altKey === modifiers.includes('Alt') &&
+               evtobj.shiftKey === modifiers.includes('Shift') &&
+               evtobj.key.toUpperCase() === key;
+    }
+
+    // Check for main spotlight
+    if (checkKeyCombo(mainSpotlight)) {
         showSpotlight(urlDictionary, (selectedKey) => {
             window.location.href = urlDictionary[selectedKey];
         });
         return;
     }
 
-    // Check for page-specific bindings
-    for (const [page, binding] of Object.entries(pageBindings)) {
-        const [pageKey, ...pageModifiers] = binding.split("+").reverse();
-        if (
-            evtobj.ctrlKey == pageModifiers.includes("Ctrl") &&
-            evtobj.altKey == pageModifiers.includes("Alt") &&
-            evtobj.shiftKey == pageModifiers.includes("Shift") &&
-            evtobj.key.toUpperCase() == pageKey
-        ) {
-            window.location.href = urlDictionary[page];
+    // Check for market spotlight
+    if (checkKeyCombo(marketSpotlight)) {
+        showSpotlight(marketItems, (selectedItem) => {
+            const marketSearchUrl = 'https://www.torn.com/imarket.php#/p=shop&step=shop&type=&searchname={q}';
+            const url = marketSearchUrl.replace('{q}', encodeURIComponent(selectedItem));
+            window.location.href = url;
+        });
+        return;
+    }
+
+    // Check for custom combinations
+    for (const [combo, action] of Object.entries(customCombinations)) {
+        if (checkKeyCombo(combo)) {
+            if (urlDictionary[action]) {
+                window.location.href = urlDictionary[action];
+            } else {
+                window.location.href = action;
+            }
             return;
         }
     }
-
-    // Check for market search
-    const [marketKey, ...marketModifiers] = marketSearch.split("+").reverse();
-    if (
-        evtobj.ctrlKey == marketModifiers.includes("Ctrl") &&
-        evtobj.altKey == marketModifiers.includes("Alt") &&
-        evtobj.shiftKey == marketModifiers.includes("Shift") &&
-        evtobj.key.toUpperCase() == marketKey
-    ) {
-        // Use a separate dictionary for market items
-        const marketItems = {
-            "Item 1": "Description 1",
-            "Item 2": "Description 2",
-            // Add more items as needed
-        };
-
-        showSpotlight(marketItems, (selectedItem) => {
-            const url = marketSearchUrl.replace(
-                "{q}",
-                encodeURIComponent(selectedItem)
-            );
-            window.location.href = url;
-        });
-    }
 }
-
 function matchScore(word, string) {
     word = word.toLowerCase();
     string = string.toLowerCase();
@@ -347,34 +393,6 @@ function setupAutocomplete(inputElement, dictionary, onSelect) {
         }
     });
 
-    // inputElement.addEventListener("keydown", function (e) {
-    //     let x = document.getElementById(this.id + "-autocomplete-list");
-    //     if (x) x = x.getElementsByTagName("div");
-    //     if (e.keyCode == 40) {
-    //         // Down arrow
-    //         currentFocus++;
-    //         addActive(x);
-    //         // changeFocus(x);
-    //     } else if (e.keyCode == 38) {
-    //         // Up arrow
-    //         currentFocus--;
-    //         addActive(x);
-    //         // changeFocus(x, );
-    //     } else if (e.keyCode == 13) {
-    //         // Enter
-    //         e.preventDefault();
-    //         if (currentFocus > -1) {
-    //             if (x) x[currentFocus].click();
-    //         } else {
-    //             // Redirect to the URL of the first suggestion
-    //             const firstSuggestion =
-    //                 x[0].getElementsByTagName("input")[0].value;
-    //             window.location.href = urlDictionary[firstSuggestion];
-    //         }
-    //     }
-    //     console.log(currentFocus);
-    // });
-
     function addActive(x) {
         if (!x) return false;
         removeActive(x);
@@ -415,7 +433,7 @@ document.addEventListener("click", function (event) {
     }
 });
 
-const styleSheet = document.createElement("style");
+let styleSheet = document.createElement("style");
 styleSheet.innerHTML = `
     .spotlight {
         list-style: none;
@@ -486,56 +504,53 @@ styleSheet.innerHTML = `
 document.body.appendChild(styleSheet);
 function createSettingsPage() {
     // Remove existing content
-    document.body.innerHTML = "";
+    document.body.innerHTML = '';
 
     // Create settings container
-    const settingsContainer = document.createElement("div");
-    settingsContainer.id = "spotlight-settings";
-    settingsContainer.style.padding = "20px";
-    settingsContainer.style.maxWidth = "800px";
-    settingsContainer.style.margin = "0 auto";
+    const settingsContainer = document.createElement('div');
+    settingsContainer.id = 'spotlight-settings';
+    settingsContainer.style.padding = '20px';
+    settingsContainer.style.maxWidth = '800px';
+    settingsContainer.style.margin = '0 auto';
 
     // Add title
-    const title = document.createElement("h1");
-    title.textContent = "Torn Spotlight Search Settings";
+    const title = document.createElement('h1');
+    title.textContent = 'Torn Spotlight Search Settings';
     settingsContainer.appendChild(title);
 
-    // 1. Spotlight trigger key combination
-    const spotlightKeySection = createKeyBindingSection(
-        "Spotlight Trigger",
-        "spotlightTrigger",
-        loadSetting("spotlightTrigger", "K+Ctrl+Shift")
-    );
+    // 1. Main Spotlight
+    const mainSpotlightSection = createKeyBindingSection('Main Spotlight', 'mainSpotlight', loadSetting('mainSpotlight', DEFAULT_MAIN_SPOTLIGHT_KEY_COMBINATION));
+    settingsContainer.appendChild(mainSpotlightSection);
 
-    // 2. Page-specific key bindings
-    const pageBindingsSection = createPageBindingsSection();
+    // 2. Market Spotlight
+    const marketSpotlightSection = createKeyBindingSection('Market Spotlight', 'marketSpotlight', loadSetting('marketSpotlight', DEFAULT_MARKET_KEY_COMBINATION));
+    settingsContainer.appendChild(marketSpotlightSection);
 
-    // 3. Market search key
-    const marketSearchSection = createKeyBindingSection(
-        "Market Search",
-        "marketSearch",
-        loadSetting("marketSearch", "M+Ctrl")
-    );
+    // Custom key combinations section
+    const customSection = document.createElement('div');
+    customSection.id = 'custom-key-combinations';
+    const customTitle = document.createElement('h3');
+    customTitle.textContent = 'Custom Key Combinations';
+    customSection.appendChild(customTitle);
 
-    // Add market search URL input
-    const marketSearchUrlInput = document.createElement("input");
-    marketSearchUrlInput.type = "text";
-    marketSearchUrlInput.placeholder = "Market search URL (use {q} for query)";
-    marketSearchUrlInput.value = loadSetting(
-        "marketSearchUrl",
-        "https://www.torn.com/imarket.php#/p=shop&step=shop&type=&searchname={q}"
-    );
-    marketSearchSection.appendChild(marketSearchUrlInput);
+    // Add button for new custom combination
+    const addButton = document.createElement('button');
+    addButton.textContent = 'Add Custom Combination';
+    addButton.addEventListener('click', () => addCustomCombination(customSection));
+    customSection.appendChild(addButton);
+
+    settingsContainer.appendChild(customSection);
+
+    // Load existing custom combinations
+    const customCombinations = loadSetting('customCombinations', {});
+    for (const [key, value] of Object.entries(customCombinations)) {
+        addCustomCombination(customSection, key, value);
+    }
 
     // Save button
-    const saveButton = document.createElement("button");
-    saveButton.textContent = "Save Settings";
-    saveButton.addEventListener("click", saveSettings);
-
-    // Append all sections
-    settingsContainer.appendChild(spotlightKeySection);
-    settingsContainer.appendChild(pageBindingsSection);
-    settingsContainer.appendChild(marketSearchSection);
+    const saveButton = document.createElement('button');
+    saveButton.textContent = 'Save Settings';
+    saveButton.addEventListener('click', saveSettings);
     settingsContainer.appendChild(saveButton);
 
     // Add settings container to body
@@ -543,77 +558,113 @@ function createSettingsPage() {
 }
 
 function createKeyBindingSection(label, id, defaultValue) {
-    const section = document.createElement("div");
-    section.style.marginBottom = "20px";
+    const section = document.createElement('div');
+    section.style.marginBottom = '20px';
 
-    const sectionLabel = document.createElement("h3");
+    const sectionLabel = document.createElement('h3');
     sectionLabel.textContent = label;
     section.appendChild(sectionLabel);
 
-    const input = document.createElement("input");
-    input.type = "text";
+    const input = document.createElement('input');
+    input.type = 'text';
     input.id = id;
     input.value = defaultValue;
-    input.addEventListener("keydown", captureKeyCombo);
+    input.addEventListener('keydown', captureKeyCombo);
     section.appendChild(input);
 
     return section;
 }
 
-function createPageBindingsSection() {
-    const section = document.createElement("div");
-    section.style.marginBottom = "20px";
+function addCustomCombination(parentElement, existingKey = '', existingValue = '') {
+    const combinationDiv = document.createElement('div');
+    combinationDiv.style.marginBottom = '10px';
 
-    const sectionLabel = document.createElement("h3");
-    sectionLabel.textContent = "Page-specific Key Bindings";
-    section.appendChild(sectionLabel);
+    const keyInput = document.createElement('input');
+    keyInput.type = 'text';
+    keyInput.placeholder = 'Key Combination';
+    keyInput.value = existingKey;
+    keyInput.addEventListener('keydown', captureKeyCombo);
+    combinationDiv.appendChild(keyInput);
 
-    const pageBindings = loadSetting("pageBindings", {});
-
-    for (const [page, url] of Object.entries(urlDictionary)) {
-        const binding = createKeyBindingSection(
-            page,
-            `pageBinding_${page}`,
-            pageBindings[page] || ""
-        );
-        section.appendChild(binding);
+    const selectElement = document.createElement('select');
+    selectElement.style.marginLeft = '10px';
+    
+    // Add options from urlDictionary
+    for (const key of Object.keys(urlDictionary)) {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = key;
+        selectElement.appendChild(option);
     }
 
-    return section;
-}
+    // Add 'Other' option
+    const otherOption = document.createElement('option');
+    otherOption.value = 'other';
+    otherOption.textContent = 'Other';
+    selectElement.appendChild(otherOption);
 
-function captureKeyCombo(event) {
-    event.preventDefault();
-    const key = event.key.toUpperCase();
-    const combo = [];
-    if (event.ctrlKey) combo.push("Ctrl");
-    if (event.altKey) combo.push("Alt");
-    if (event.shiftKey) combo.push("Shift");
-    combo.push(key);
-    event.target.value = combo.join("+");
+    combinationDiv.appendChild(selectElement);
+
+    const urlInput = document.createElement('input');
+    urlInput.type = 'text';
+    urlInput.placeholder = 'Custom URL';
+    urlInput.style.display = 'none';
+    urlInput.style.marginLeft = '10px';
+    combinationDiv.appendChild(urlInput);
+
+    if (existingValue && !urlDictionary[existingValue]) {
+        selectElement.value = 'other';
+        urlInput.style.display = 'inline-block';
+        urlInput.value = existingValue;
+    } else if (existingValue) {
+        selectElement.value = existingValue;
+    }
+
+    selectElement.addEventListener('change', () => {
+        if (selectElement.value === 'other') {
+            urlInput.style.display = 'inline-block';
+        } else {
+            urlInput.style.display = 'none';
+        }
+    });
+
+    const removeButton = document.createElement('button');
+    removeButton.textContent = 'Remove';
+    removeButton.style.marginLeft = '10px';
+    removeButton.addEventListener('click', () => parentElement.removeChild(combinationDiv));
+    combinationDiv.appendChild(removeButton);
+
+    parentElement.insertBefore(combinationDiv, parentElement.lastElementChild);
 }
 
 function saveSettings() {
-    const spotlightTrigger = document.getElementById("spotlightTrigger").value;
-    const marketSearch = document.getElementById("marketSearch").value;
-    const marketSearchUrl = document.querySelector(
-        'input[placeholder="Market search URL (use {q} for query)"]'
-    ).value;
+    const mainSpotlight = document.getElementById('mainSpotlight').value;
+    const marketSpotlight = document.getElementById('marketSpotlight').value;
 
-    const pageBindings = {};
-    for (const page of Object.keys(urlDictionary)) {
-        const binding = document.getElementById(`pageBinding_${page}`).value;
-        if (binding) {
-            pageBindings[page] = binding;
+    saveSetting('mainSpotlight', mainSpotlight);
+    saveSetting('marketSpotlight', marketSpotlight);
+
+    const customCombinations = {};
+    const customSection = document.getElementById('custom-key-combinations');
+    const combinationDivs = customSection.getElementsByTagName('div');
+
+    for (const div of combinationDivs) {
+        const keyCombo = div.getElementsByTagName('input')[0].value;
+        const selectElement = div.getElementsByTagName('select')[0];
+        const urlInput = div.getElementsByTagName('input')[1];
+
+        if (keyCombo) {
+            if (selectElement.value === 'other') {
+                customCombinations[keyCombo] = urlInput.value;
+            } else {
+                customCombinations[keyCombo] = selectElement.value;
+            }
         }
     }
 
-    saveSetting("spotlightTrigger", spotlightTrigger);
-    saveSetting("marketSearch", marketSearch);
-    saveSetting("marketSearchUrl", marketSearchUrl);
-    saveSetting("pageBindings", pageBindings);
+    saveSetting('customCombinations', customCombinations);
 
-    alert("Settings saved successfully!");
+    alert('Settings saved successfully!');
 }
 
 function loadSetting(key, defaultValue) {
@@ -625,9 +676,28 @@ function saveSetting(key, value) {
     localStorage.setItem(`spotlightSearch_${key}`, JSON.stringify(value));
 }
 
+function captureKeyCombo(event) {
+    event.preventDefault();
+    const key = event.key.toUpperCase();
+    const combo = [];
+    if (event.ctrlKey) combo.push('Ctrl');
+    if (event.altKey) combo.push('Alt');
+    if (event.shiftKey) combo.push('Shift');
+    combo.push(key);
+    event.target.value = combo.join('+');
+}
 
 // Add this near the top of your script
 if (window.location.pathname === "/spotlight-settings.php") {
+    styleSheet += `
+    * {
+    font-family: 'Bricolage Grotesque';
+    }
+    `
     createSettingsPage();
     return;
+}
+
+marketItems = {
+    "Xanax": "xanax",
 }
