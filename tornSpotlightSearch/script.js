@@ -15,6 +15,7 @@
 // Default Settings
 const DEFAULT_MAIN_SPOTLIGHT_KEY_COMBINATION = "Ctrl+Shift+K";
 const DEFAULT_MARKET_KEY_COMBINATION = "Ctrl+M";
+const SETTINGS_PAGE = "/spotlight-settings.php";
 
 
 // Key Combinations
@@ -25,9 +26,7 @@ const pressAltKey = modifiers.includes("Alt");
 const pressShiftKey = modifiers.includes("Shift");
 
 // Define your dictionary of keys and URLs
-let 
-
-urlDictionary = {
+let urlDictionary = {
     "Home": "https://www.torn.com/",
     "Wiki": "https://www.torn.com/wiki/Argentina",
     "Rules": "https://www.torn.com/rules.php",
@@ -136,6 +135,9 @@ let marketItems = {
 };
 
 
+let overlay = createOverlay();
+overlay.style.display = 'none';
+
 function addStylesAndFonts() {
     // Add Bootstrap CSS
     const bootstrapLink = document.createElement('link');
@@ -238,7 +240,6 @@ function showSpotlight(dictionary, onSelect) {
     });
 
     spotlight.dispatchEvent(new Event("input"));
-
     document.addEventListener("click", function closeSpotlight(event) {
         if (event.target.id !== "spotlight") {
             document.body.removeChild(spotlightDiv);
@@ -504,19 +505,29 @@ styleSheet.innerHTML = `
 document.body.appendChild(styleSheet);
 function createSettingsPage() {
     // Remove existing content
-    document.body.innerHTML = '';
+    // document.body.innerHTML = '';
+
+    const headerRootElement = document.getElementById('header-root');
+    const notifyUser = document.createElement('div');
+    const notifyUserText = document.createElement('h4');
+    notifyUserText.textContent = 'Note. This isn\'t an official page. This page is overwritten by Spotlight Search. And is under construction.';
+    notifyUser.style.color = '#f00';
+    notifyUser.style.marginTop = '20px';
+    notifyUserText.style.fontSize = '12px';
+    notifyUser.appendChild(notifyUserText);
+    headerRootElement.appendChild(notifyUser);
 
     // Create settings container
     const settingsContainer = document.createElement('div');
-    settingsContainer.id = 'spotlight-settings';
-    settingsContainer.style.padding = '20px';
-    settingsContainer.style.maxWidth = '800px';
-    settingsContainer.style.margin = '0 auto';
+    // settingsContainer.id = 'spotlight-settings';
+    // settingsContainer.style.padding = '20px';
+    // settingsContainer.style.maxWidth = '800px';
+    // settingsContainer.style.margin = '0 auto';
 
     // Add title
-    const title = document.createElement('h1');
-    title.textContent = 'Torn Spotlight Search Settings';
-    settingsContainer.appendChild(title);
+    // const title = document.createElement('h1');
+    // title.textContent = 'Torn Spotlight Search Settings';
+    // settingsContainer.appendChild(title);
 
     // 1. Main Spotlight
     const mainSpotlightSection = createKeyBindingSection('Main Spotlight', 'mainSpotlight', loadSetting('mainSpotlight', DEFAULT_MAIN_SPOTLIGHT_KEY_COMBINATION));
@@ -536,6 +547,8 @@ function createSettingsPage() {
     // Add button for new custom combination
     const addButton = document.createElement('button');
     addButton.textContent = 'Add Custom Combination';
+    addButton.classList.add('torn-btn');
+    addButton.classList.add('btn-small');
     addButton.addEventListener('click', () => addCustomCombination(customSection));
     customSection.appendChild(addButton);
 
@@ -550,11 +563,23 @@ function createSettingsPage() {
     // Save button
     const saveButton = document.createElement('button');
     saveButton.textContent = 'Save Settings';
+    saveButton.classList.add('torn-btn');
+    saveButton.style.marginTop = '20px';
     saveButton.addEventListener('click', saveSettings);
     settingsContainer.appendChild(saveButton);
 
     // Add settings container to body
-    document.body.appendChild(settingsContainer);
+    // document.body.appendChild(settingsContainer);
+
+    // Title
+    const titleElement = document.getElementById("skip-to-content");
+    titleElement.innerText = "Spotlight Settings";
+
+    const errorPageContent = document.getElementsByClassName("main-wrap")[0];
+    const contentWrapper = document.getElementsByClassName("content-wrapper")[0];
+    contentWrapper.removeChild(errorPageContent);
+    contentWrapper.appendChild(settingsContainer);
+
 }
 
 function createKeyBindingSection(label, id, defaultValue) {
@@ -594,6 +619,7 @@ function addCustomCombination(parentElement, existingKey = '', existingValue = '
         const option = document.createElement('option');
         option.value = key;
         option.textContent = key;
+        option.classList.add('item')
         selectElement.appendChild(option);
     }
 
@@ -631,6 +657,8 @@ function addCustomCombination(parentElement, existingKey = '', existingValue = '
     const removeButton = document.createElement('button');
     removeButton.textContent = 'Remove';
     removeButton.style.marginLeft = '10px';
+    removeButton.classList.add('torn-btn');
+    removeButton.classList.add('btn-small');
     removeButton.addEventListener('click', () => parentElement.removeChild(combinationDiv));
     combinationDiv.appendChild(removeButton);
 
@@ -688,7 +716,7 @@ function captureKeyCombo(event) {
 }
 
 // Add this near the top of your script
-if (window.location.pathname === "/spotlight-settings.php") {
+if (window.location.pathname === SETTINGS_PAGE) {
     styleSheet += `
     * {
     font-family: 'Bricolage Grotesque';
