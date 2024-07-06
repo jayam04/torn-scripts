@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Torn Spotlight Search
 // @namespace    http://tampermonkey.net/
-// @version      beta-2.0
+// @version      beta-2.1
 // @description  Navigate Torn Faster
 // @author       Jayam Patel
 // @match        https://www.torn.com/*
@@ -11,15 +11,16 @@
 // @grant        none
 // ==/UserScript==
 
-
 // Default Settings
 const DEFAULT_MAIN_SPOTLIGHT_KEY_COMBINATION = "Ctrl+Shift+K";
 const DEFAULT_MARKET_KEY_COMBINATION = "Ctrl+M";
 const SETTINGS_PAGE = "/spotlight-settings.php";
 
-
 // Key Combinations
-const storedSpotlightTrigger = loadSetting("spotlightTrigger", DEFAULT_MAIN_SPOTLIGHT_KEY_COMBINATION);
+const storedSpotlightTrigger = loadSetting(
+  "spotlightTrigger",
+  DEFAULT_MAIN_SPOTLIGHT_KEY_COMBINATION,
+);
 const [mainKey, ...modifiers] = storedSpotlightTrigger.split("+").reverse();
 const pressControlKey = modifiers.includes("Ctrl");
 const pressAltKey = modifiers.includes("Alt");
@@ -27,133 +28,136 @@ const pressShiftKey = modifiers.includes("Shift");
 
 // Define your dictionary of keys and URLs
 let urlDictionary = {
-    "Home": "https://www.torn.com/",
-    "Wiki": "https://www.torn.com/wiki/Argentina",
-    "Rules": "https://www.torn.com/rules.php",
-    "Forums": "https://www.torn.com/forums.php",
-    "Discord": "https://www.torn.com/discord",
-    "Staff": "https://www.torn.com/staff.php",
-    "Credits": "https://www.torn.com/credits.php",
-    "Settings": "https://www.torn.com/preferences.php",
-    "Logout": "https://www.torn.com/logout.php",
-    "Merits": "https://www.torn.com/awards.php#/merits",
-    "Education": "https://www.torn.com/page.php?sid=education",
-    "Loan Shark": "https://www.torn.com/loan.php",
-    "Item Market": "https://www.torn.com/imarket.php",
-    "Torn City": "https://www.torn.com/city.php#",
-    "Messages": "https://www.torn.com/messages.php",
-    "Events": "https://www.torn.com/page.php?sid=events",
-    "Awards": "https://www.torn.com/awards.php",
-    "Job": "https://www.torn.com/jobs.php",
-    "Missions": "https://www.torn.com/loader.php?sid=missions",
-    "Newspaper": "https://www.torn.com/newspaper.php",
-    "Hall of Fame": "https://www.torn.com/page.php?sid=hof",
-    "My Faction": "https://www.torn.com/factions.php?step=your",
-    "Logs": "https://www.torn.com/page.php?sid=log",
-    "Recruit Citizens": "https://www.torn.com/bringafriend.php",
-    "Weapon Mods": "https://www.torn.com/loader.php?sid=itemsMods",
-    "Calendar": "https://www.torn.com/calendar.php",
-    "Friends": "https://www.torn.com/friendlist.php",
-    "Enemies": "https://www.torn.com/blacklist.php",
-    "Points Store": "https://www.torn.com/points.php",
-    "Faction": "https://www.torn.com/factions.php?step=your",
-    "(Casino) Russian Roulette": "https://www.torn.com/page.php?sid=russianRoulette",
-    "(Casino) Slots": "https://www.torn.com/page.php?sid=slots",
-    "(Casino) Roulette": "https://www.torn.com/page.php?sid=roulette",
-    "(Casino) Poker": "https://www.torn.com/page.php?sid=holdem",
-    "(Casino) High Low": "https://www.torn.com/page.php?sid=highlow",
-    "(Casino) Blackjack": "https://www.torn.com/page.php?sid=blackjack",
-    "(Casino) Bookie": "https://www.torn.com/page.php?sid=bookie",
-    "(Casino) Lottery": "https://www.torn.com/page.php?sid=lottery",
-    "Craps": "https://www.torn.com/page.php?sid=craps",
-    "(Faction) Forum": "https://www.torn.com/forums.php#/p=forums&f=999&b=1&a=1149",
-    "(Faction) Warfare": "https://www.torn.com/page.php?sid=factionWarfare",
-    "Bits 'n' Bobs": "https://www.torn.com/shops.php?step=bitsnbobs",
-    "Bounties": "https://www.torn.com/bounties.php",
-    "Chronicle Archives": "https://www.torn.com/archives.php",
-    "Classified Ads": "https://www.torn.com/newspaper_class.php",
-    "Docks": "https://www.torn.com/shops.php?step=docks",
-    "Jewelry Store": "https://www.torn.com/shops.php?step=jewelry",
-    "Cyber Force": "https://www.torn.com/shops.php?step=cyberforce",
-    "Big Al's Gun Shop": "https://www.torn.com/bigalgunshop.php",
-    "Museum": "https://www.torn.com/museum.php",
-    "Print Store": "https://www.torn.com/shops.php?step=printstore",
-    "Organized Crimes": "https://www.torn.com/factions.php?step=your#/tab=crimes",
-    "(Faction) Controls": "https://www.torn.com/factions.php?step=your#/tab=controls",
-    "TC Clothing": "https://www.torn.com/shops.php?step=clothes",
-    "Sweet Shop": "https://www.torn.com/shops.php?step=candy",
-    "Post Office": "https://www.torn.com/shops.php?step=postoffice",
-    "Pawn Shop": "https://www.torn.com/shops.php?step=pawnshop",
-    "Big Al's Bunker": "https://www.torn.com/page.php?sid=bunker",
-    "Stock Market": "https://www.torn.com/page.php?sid=stocks",
-    "Church": "https://www.torn.com/church.php",
-    "Company Funds": "https://www.torn.com/companies.php#/option=funds",
-    "Manage Display Case": "https://www.torn.com/displaycase.php#manage",
-    "Trades": "https://www.torn.com/trade.php",
-    "Display Case": "https://www.torn.com/displaycase.php",
-    "Ammo Locker": "https://www.torn.com/page.php?sid=ammo",
-    "Donator House": "https://www.torn.com/donator.php",
-    "City Hall": "https://www.torn.com/citystats.php",
-    "Points Market": "https://www.torn.com/pmarket.php",
-    "Auction House": "https://www.torn.com/amarket.php",
-    "Dump": "https://www.torn.com/dump.php",
-    "Points Building": "https://www.torn.com/points.php",
-    "Home": "https://www.torn.com/index.php",
-    "Properties": "https://www.torn.com/properties.php",
-    "Travel Agency": "https://www.torn.com/travelagency.php",
-    "Items": "https://www.torn.com/item.php",
-    "City": "https://www.torn.com/city.php",
-    "Bazaar": "https://www.torn.com/bazaar.php",
-    "Gym": "https://www.torn.com/gym.php",
-    "Crimes": "https://www.torn.com/crimes.php#/step=main",
-    "Raceway": "https://www.torn.com/page.php?sid=racing",
-    "Jail": "https://www.torn.com/jailview.php",
-    "Hospital": "https://www.torn.com/hospitalview.php",
-    "City Bank": "https://www.torn.com/bank.php",
-    "Casino": "https://www.torn.com/casino.php",
-    "Log": "https://www.torn.com/page.php?sid=log",
-    "Pharmacy": "https://www.torn.com/shops.php?step=pharmacy",
-    "Nikeh Sports": "https://www.torn.com/shops.php?step=nikeh",
-    "Personal Stats": "https://www.torn.com/personalstats.php",
-    "Property Vault": "https://www.torn.com/properties.php#/p=options&tab=vault",
-    "Manage Bazaar": "https://www.torn.com/bazaar.php#/manage",
-    "Visitors Center": "https://www.torn.com/wiki",
-    "Estate Agents": "https://www.torn.com/estateagents.php",
-    "Recycling Center": "https://www.torn.com/shops.php?step=recyclingcenter",
-    "Super Store": "https://www.torn.com/shops.php?step=super",
-    "Token Shop": "https://www.torn.com/token_shop.php",
-    "Faction Armory": "https://www.torn.com/factions.php?step=your#/tab=armoury",
-    "Keno": "https://www.torn.com/page.php?sid=keno",
-    "Bugs & Issues": "https://www.torn.com/forums.php#/p=forums&f=19",
-    "Spin the Wheel": "https://www.torn.com/page.php?sid=spinTheWheel",
-    "Company": "https://www.torn.com/companies.php",
-    "Spotlight Settings": "https://www.torn.com/spotlight-settings.php",
-}
-
-let marketItems = {
-    "Xanax": "xanax",
+  Home: "https://www.torn.com",
+  Wiki: "https://www.torn.com/wiki",
+  Rules: "https://www.torn.com/rules.php",
+  Forums: "https://www.torn.com/forums.php",
+  Discord: "https://www.torn.com/discord",
+  Staff: "https://www.torn.com/staff.php",
+  Credits: "https://www.torn.com/credits.php",
+  Settings: "https://www.torn.com/preferences.php",
+  Logout: "https://www.torn.com/logout.php",
+  Merits: "https://www.torn.com/awards.php#/merits",
+  Education: "https://www.torn.com/page.php?sid=education",
+  "Loan Shark": "https://www.torn.com/loan.php",
+  "Item Market": "https://www.torn.com/imarket.php",
+  "Torn City": "https://www.torn.com/city.php#",
+  Messages: "https://www.torn.com/messages.php",
+  Events: "https://www.torn.com/page.php?sid=events",
+  Awards: "https://www.torn.com/awards.php",
+  Job: "https://www.torn.com/jobs.php",
+  Missions: "https://www.torn.com/loader.php?sid=missions",
+  Newspaper: "https://www.torn.com/newspaper.php",
+  "Hall of Fame": "https://www.torn.com/page.php?sid=hof",
+  "My Faction": "https://www.torn.com/factions.php?step=your",
+  Logs: "https://www.torn.com/page.php?sid=log",
+  "Recruit Citizens": "https://www.torn.com/bringafriend.php",
+  "Weapon Mods": "https://www.torn.com/loader.php?sid=itemsMods",
+  Calendar: "https://www.torn.com/calendar.php",
+  Friends: "https://www.torn.com/friendlist.php",
+  Enemies: "https://www.torn.com/blacklist.php",
+  "Points Store": "https://www.torn.com/points.php",
+  "(Casino) Russian Roulette":
+    "https://www.torn.com/page.php?sid=russianRoulette",
+  "(Casino) Slots": "https://www.torn.com/page.php?sid=slots",
+  "(Casino) Roulette": "https://www.torn.com/page.php?sid=roulette",
+  "(Casino) Poker": "https://www.torn.com/page.php?sid=holdem",
+  "(Casino) High Low": "https://www.torn.com/page.php?sid=highlow",
+  "(Casino) Blackjack": "https://www.torn.com/page.php?sid=blackjack",
+  "(Casino) Bookie": "https://www.torn.com/page.php?sid=bookie",
+  "(Casino) Lottery": "https://www.torn.com/page.php?sid=lottery",
+  Craps: "https://www.torn.com/page.php?sid=craps",
+  "(Faction) Forum":
+    "https://www.torn.com/forums.php#/p=forums&f=999&b=1&a=1149",
+  "(Faction) Warfare": "https://www.torn.com/page.php?sid=factionWarfare",
+  "Bits 'n' Bobs": "https://www.torn.com/shops.php?step=bitsnbobs",
+  Bounties: "https://www.torn.com/bounties.php",
+  "Chronicle Archives": "https://www.torn.com/archives.php",
+  "Classified Ads": "https://www.torn.com/newspaper_class.php",
+  Docks: "https://www.torn.com/shops.php?step=docks",
+  "Jewelry Store": "https://www.torn.com/shops.php?step=jewelry",
+  "Cyber Force": "https://www.torn.com/shops.php?step=cyberforce",
+  "Big Al's Gun Shop": "https://www.torn.com/bigalgunshop.php",
+  Museum: "https://www.torn.com/museum.php",
+  "Print Store": "https://www.torn.com/shops.php?step=printstore",
+  "Organized Crimes": "https://www.torn.com/factions.php?step=your#/tab=crimes",
+  "(Faction) Controls":
+    "https://www.torn.com/factions.php?step=your#/tab=controls",
+  "TC Clothing": "https://www.torn.com/shops.php?step=clothes",
+  "Sweet Shop": "https://www.torn.com/shops.php?step=candy",
+  "Post Office": "https://www.torn.com/shops.php?step=postoffice",
+  "Pawn Shop": "https://www.torn.com/shops.php?step=pawnshop",
+  "Big Al's Bunker": "https://www.torn.com/page.php?sid=bunker",
+  "Stock Market": "https://www.torn.com/page.php?sid=stocks",
+  Church: "https://www.torn.com/church.php",
+  "Company Funds": "https://www.torn.com/companies.php#/option=funds",
+  "Manage Display Case": "https://www.torn.com/displaycase.php#manage",
+  Trades: "https://www.torn.com/trade.php",
+  "Display Case": "https://www.torn.com/displaycase.php",
+  "Ammo Locker": "https://www.torn.com/page.php?sid=ammo",
+  "Donator House": "https://www.torn.com/donator.php",
+  "City Hall": "https://www.torn.com/citystats.php",
+  "Points Market": "https://www.torn.com/pmarket.php",
+  "Auction House": "https://www.torn.com/amarket.php",
+  Dump: "https://www.torn.com/dump.php",
+  "Points Building": "https://www.torn.com/points.php",
+  Home: "https://www.torn.com/index.php",
+  Properties: "https://www.torn.com/properties.php",
+  "Travel Agency": "https://www.torn.com/travelagency.php",
+  Items: "https://www.torn.com/item.php",
+  City: "https://www.torn.com/city.php",
+  Bazaar: "https://www.torn.com/bazaar.php",
+  Gym: "https://www.torn.com/gym.php",
+  Crimes: "https://www.torn.com/crimes.php#/step=main",
+  Raceway: "https://www.torn.com/page.php?sid=racing",
+  Jail: "https://www.torn.com/jailview.php",
+  Hospital: "https://www.torn.com/hospitalview.php",
+  "City Bank": "https://www.torn.com/bank.php",
+  Casino: "https://www.torn.com/casino.php",
+  Log: "https://www.torn.com/page.php?sid=log",
+  Pharmacy: "https://www.torn.com/shops.php?step=pharmacy",
+  "Nikeh Sports": "https://www.torn.com/shops.php?step=nikeh",
+  "Personal Stats": "https://www.torn.com/personalstats.php",
+  "Property Vault": "https://www.torn.com/properties.php#/p=options&tab=vault",
+  "Manage Bazaar": "https://www.torn.com/bazaar.php#/manage",
+  "Visitors Center": "https://www.torn.com/wiki",
+  "Estate Agents": "https://www.torn.com/estateagents.php",
+  "Recycling Center": "https://www.torn.com/shops.php?step=recyclingcenter",
+  "Super Store": "https://www.torn.com/shops.php?step=super",
+  "Token Shop": "https://www.torn.com/token_shop.php",
+  "(Faction) Armory": "https://www.torn.com/factions.php?step=your#/tab=armoury",
+  Keno: "https://www.torn.com/page.php?sid=keno",
+  "Bugs & Issues": "https://www.torn.com/forums.php#/p=forums&f=19",
+  "Spin the Wheel": "https://www.torn.com/page.php?sid=spinTheWheel",
+  Company: "https://www.torn.com/companies.php",
+  "Spotlight Settings": "https://www.torn.com/spotlight-settings.php",
 };
 
+let marketItems = {
+  Xanax: "xanax",
+};
 
 let overlay = createOverlay();
-overlay.style.display = 'none';
+overlay.style.display = "none";
 
 function addStylesAndFonts() {
-    // Add Bootstrap CSS
-    const bootstrapLink = document.createElement('link');
-    bootstrapLink.rel = 'stylesheet';
-    bootstrapLink.href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css';
-    document.head.appendChild(bootstrapLink);
+  // Add Bootstrap CSS
+  const bootstrapLink = document.createElement("link");
+  bootstrapLink.rel = "stylesheet";
+  bootstrapLink.href =
+    "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css";
+  document.head.appendChild(bootstrapLink);
 
-    // Add Google Fonts
-    const fontLink = document.createElement('link');
-    fontLink.rel = 'stylesheet';
-    fontLink.href = 'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;700&display=swap';
-    document.head.appendChild(fontLink);
+  // Add Google Fonts
+  const fontLink = document.createElement("link");
+  fontLink.rel = "stylesheet";
+  fontLink.href =
+    "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;700&display=swap";
+  document.head.appendChild(fontLink);
 
-    // Add custom styles
-    const style = document.createElement('style');
-    style.textContent = `
+  // Add custom styles
+  const style = document.createElement("style");
+  style.textContent = `
         body {
             font-family: 'Bricolage Grotesque', sans-serif;
             background-color: #f8f9fa;
@@ -167,23 +171,23 @@ function addStylesAndFonts() {
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
     `;
-    document.head.appendChild(style);
+  document.head.appendChild(style);
 }
 function createOverlay() {
-    const overlay = document.createElement("div");
-    overlay.id = "spotlight-overlay";
-    overlay.style.position = "fixed";
-    overlay.style.top = "0";
-    overlay.style.left = "0";
-    overlay.style.width = "100%";
-    overlay.style.height = "100%";
-    overlay.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
-    overlay.style.backdropFilter = "blur(5px)";
-    overlay.style.WebkitBackdropFilter = "blur(5px)"; // For Safari
-    overlay.style.zIndex = "9999999999999"; // One less than spotlight
-    overlay.style.display = "none";
-    document.body.appendChild(overlay);
-    return overlay;
+  const overlay = document.createElement("div");
+  overlay.id = "spotlight-overlay";
+  overlay.style.position = "fixed";
+  overlay.style.top = "0";
+  overlay.style.left = "0";
+  overlay.style.width = "100%";
+  overlay.style.height = "100%";
+  overlay.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+  overlay.style.backdropFilter = "blur(5px)";
+  overlay.style.WebkitBackdropFilter = "blur(5px)"; // For Safari
+  overlay.style.zIndex = "9999999999999"; // One less than spotlight
+  overlay.style.display = "none";
+  document.body.appendChild(overlay);
+  return overlay;
 }
 
 // const overlay = createOverlay();
@@ -207,231 +211,243 @@ spotlight.style.visibility = "hidden";
 spotlightDiv.appendChild(spotlight);
 document.body.appendChild(spotlightDiv);
 
-function showSpotlight(dictionary, onSelect) {
-    const spotlightDiv = document.createElement("div");
-    spotlightDiv.style.zIndex = 100000000000000;
-    spotlightDiv.style.position = "fixed";
-    spotlightDiv.style.left = "50%";
-    spotlightDiv.style.transform = "translateX(-50%)";
-    spotlightDiv.style.width = "500px";
-    spotlightDiv.style.top = "100px";
+function showSpotlight(dictionary, onSelect, previewURL = true) {
+  const spotlightDiv = document.createElement("div");
+  spotlightDiv.style.zIndex = 100000000000000;
+  spotlightDiv.style.position = "fixed";
+  spotlightDiv.style.left = "50%";
+  spotlightDiv.style.transform = "translateX(-50%)";
+  spotlightDiv.style.width = "500px";
+  spotlightDiv.style.top = "100px";
 
-    const spotlight = document.createElement("input");
-    spotlight.setAttribute("type", "text");
-    spotlight.setAttribute("id", "spotlight");
-    spotlight.setAttribute("placeholder", "Spotlight Search");
-    spotlight.classList.add("spotlight");
+  const spotlight = document.createElement("input");
+  spotlight.setAttribute("type", "text");
+  spotlight.setAttribute("id", "spotlight");
+  spotlight.setAttribute("placeholder", "Spotlight Search");
+  spotlight.classList.add("spotlight");
 
-    spotlightDiv.appendChild(spotlight);
-    document.body.appendChild(spotlightDiv);
+  spotlightDiv.appendChild(spotlight);
+  document.body.appendChild(spotlightDiv);
 
-    const overlay = createOverlay();
-    overlay.style.display = "block";
-    overlay.style.zIndex = "99999";
+  const overlay = createOverlay();
+  overlay.style.display = "block";
+  overlay.style.zIndex = "99999";
 
-    spotlight.style.visibility = "visible";
-    spotlight.value = "";
-    spotlight.focus();
+  spotlight.style.visibility = "visible";
+  spotlight.value = "";
+  spotlight.focus();
 
-    setupAutocomplete(spotlight, dictionary, (selectedKey) => {
-        document.body.removeChild(spotlightDiv);
-        overlay.style.display = "none";
-        onSelect(selectedKey);
-    });
+  setupAutocomplete(spotlight, dictionary, (selectedKey) => {
+    document.body.removeChild(spotlightDiv);
+    overlay.style.display = "none";
+    onSelect(selectedKey);
+  }, previewURL);
 
-    spotlight.dispatchEvent(new Event("input"));
-    document.addEventListener("click", function closeSpotlight(event) {
-        if (event.target.id !== "spotlight") {
-            document.body.removeChild(spotlightDiv);
-            overlay.style.display = "none";
-            document.removeEventListener("click", closeSpotlight);
-        }
-    });
+  spotlight.dispatchEvent(new Event("input"));
+  document.addEventListener("click", function closeSpotlight(event) {
+    if (event.target.id !== "spotlight") {
+      document.body.removeChild(spotlightDiv);
+      overlay.style.display = "none";
+      document.removeEventListener("click", closeSpotlight);
+    }
+  });
 }
 
 function KeyPress(e) {
-    var evtobj = window.event ? event : e;
-    const mainSpotlight = loadSetting('mainSpotlight', DEFAULT_MAIN_SPOTLIGHT_KEY_COMBINATION);
-    const marketSpotlight = loadSetting('marketSpotlight', DEFAULT_MARKET_KEY_COMBINATION);
-    const customCombinations = loadSetting('customCombinations', {});
+  var evtobj = window.event ? event : e;
+  const mainSpotlight = loadSetting(
+    "mainSpotlight",
+    DEFAULT_MAIN_SPOTLIGHT_KEY_COMBINATION,
+  );
+  const marketSpotlight = loadSetting(
+    "marketSpotlight",
+    DEFAULT_MARKET_KEY_COMBINATION,
+  );
+  const customCombinations = loadSetting("customCombinations", {});
 
-    function checkKeyCombo(combo) {
-        const [key, ...modifiers] = combo.split('+').reverse();
-        return evtobj.ctrlKey === modifiers.includes('Ctrl') &&
-               evtobj.altKey === modifiers.includes('Alt') &&
-               evtobj.shiftKey === modifiers.includes('Shift') &&
-               evtobj.key.toUpperCase() === key;
-    }
+  function checkKeyCombo(combo) {
+    const [key, ...modifiers] = combo.split("+").reverse();
+    return (
+      evtobj.ctrlKey === modifiers.includes("Ctrl") &&
+      evtobj.altKey === modifiers.includes("Alt") &&
+      evtobj.shiftKey === modifiers.includes("Shift") &&
+      evtobj.key.toUpperCase() === key
+    );
+  }
 
-    // Check for main spotlight
-    if (checkKeyCombo(mainSpotlight)) {
-        showSpotlight(urlDictionary, (selectedKey) => {
-            window.location.href = urlDictionary[selectedKey];
-        });
-        return;
-    }
+  // Check for main spotlight
+  if (checkKeyCombo(mainSpotlight)) {
+    showSpotlight(urlDictionary, (selectedKey) => {
+      window.location.href = urlDictionary[selectedKey];
+    });
+    return;
+  }
 
-    // Check for market spotlight
-    if (checkKeyCombo(marketSpotlight)) {
-        showSpotlight(marketItems, (selectedItem) => {
-            const marketSearchUrl = 'https://www.torn.com/imarket.php#/p=shop&step=shop&type=&searchname={q}';
-            const url = marketSearchUrl.replace('{q}', encodeURIComponent(selectedItem));
-            window.location.href = url;
-        });
-        return;
-    }
+  // Check for market spotlight
+  if (checkKeyCombo(marketSpotlight)) {
+    showSpotlight(marketItems, (selectedItem) => {
+      const marketSearchUrl =
+        "https://www.torn.com/imarket.php#/p=shop&step=shop&type=&searchname={q}";
+      const url = marketSearchUrl.replace(
+        "{q}",
+        encodeURIComponent(selectedItem),
+      );
+      window.location.href = url;
+    }, previewURL = false);
+    return;
+  }
 
-    // Check for custom combinations
-    for (const [combo, action] of Object.entries(customCombinations)) {
-        if (checkKeyCombo(combo)) {
-            if (urlDictionary[action]) {
-                window.location.href = urlDictionary[action];
-            } else {
-                window.location.href = action;
-            }
-            return;
-        }
+  // Check for custom combinations
+  for (const [combo, action] of Object.entries(customCombinations)) {
+    if (checkKeyCombo(combo)) {
+      if (urlDictionary[action]) {
+        window.location.href = urlDictionary[action];
+      } else {
+        window.location.href = action;
+      }
+      return;
     }
+  }
 }
 function matchScore(word, string) {
-    word = word.toLowerCase();
-    string = string.toLowerCase();
+  word = word.toLowerCase();
+  string = string.toLowerCase();
 
-    // Split the string into words
-    const words = string.split(/\s+/);
+  // Split the string into words
+  const words = string.split(/\s+/);
 
-    // Check for exact word match
-    if (words.includes(word)) return [2, 0];
+  // Check for exact word match
+  if (words.includes(word)) return [2, 0];
 
-    // Check for partial word match
-    for (let w of words) {
-        if (w.includes(word)) return [1, w.indexOf(word)];
+  // Check for partial word match
+  for (let w of words) {
+    if (w.includes(word)) return [1, w.indexOf(word)];
+  }
+
+  // Check for ordered character match
+  let i = 0;
+  let gaps = 0;
+  for (let char of string) {
+    if (char === word[i]) {
+      i++;
+      if (i === word.length) return [0, gaps];
+    } else {
+      gaps++;
     }
+  }
 
-    // Check for ordered character match
-    let i = 0;
-    let gaps = 0;
-    for (let char of string) {
-        if (char === word[i]) {
-            i++;
-            if (i === word.length) return [0, gaps];
-        } else {
-            gaps++;
-        }
-    }
-
-    return [-1, Infinity]; // No match
+  return [-1, Infinity]; // No match
 }
 
 function sortKeys(input, dictionary) {
-    return Object.keys(dictionary).sort((a, b) => {
-        const [scoreA, gapsA] = matchScore(input, a);
-        const [scoreB, gapsB] = matchScore(input, b);
+  return Object.keys(dictionary).sort((a, b) => {
+    const [scoreA, gapsA] = matchScore(input, a);
+    const [scoreB, gapsB] = matchScore(input, b);
 
-        if (scoreA !== scoreB) return scoreB - scoreA;
-        if (gapsA !== gapsB) return gapsA - gapsB;
-        return a.localeCompare(b);
-    });
+    if (scoreA !== scoreB) return scoreB - scoreA;
+    if (gapsA !== gapsB) return gapsA - gapsB;
+    return a.localeCompare(b);
+  });
 }
 
 let currentFocus = 0;
-function setupAutocomplete(inputElement, dictionary, onSelect) {
-    let currentFocus = 0;
+function setupAutocomplete(inputElement, dictionary, onSelect, previewURL = true) {
+  let currentFocus = 0;
 
-    inputElement.addEventListener("input", function (e) {
-        closeAllLists();
-        currentFocus = 0;
-        const autocompleteList = document.createElement("div");
-        autocompleteList.setAttribute("id", this.id + "-autocomplete-list");
-        autocompleteList.setAttribute("class", "autocomplete-items");
-        autocompleteList.classList.add("spotlight-suggestion-box");
-        autocompleteList.style.maxHeight = "400px";
-        autocompleteList.style.overflowY = "scroll";
-        this.parentNode.appendChild(autocompleteList);
+  inputElement.addEventListener("input", function (e) {
+    closeAllLists();
+    currentFocus = 0;
+    const autocompleteList = document.createElement("div");
+    autocompleteList.setAttribute("id", this.id + "-autocomplete-list");
+    autocompleteList.setAttribute("class", "autocomplete-items");
+    autocompleteList.classList.add("spotlight-suggestion-box");
+    autocompleteList.style.maxHeight = "400px";
+    autocompleteList.style.overflowY = "scroll";
+    this.parentNode.appendChild(autocompleteList);
 
-        const sortedKeys = sortKeys(this.value, dictionary);
+    const sortedKeys = sortKeys(this.value, dictionary);
 
-        for (let i = 0; i < sortedKeys.length; i++) {
-            const key = sortedKeys[i];
-            const [score, _] = matchScore(this.value, key);
-            if (score >= 0 || !this.value) {
-                const item = document.createElement("DIV");
-                item.innerHTML = key;
-                if (dictionary[key]) {
-                    item.innerHTML += "<br><small>" + dictionary[key] + "</small>";
-                }
-                item.innerHTML += "<input type='hidden' value='" + key + "'>";
-                item.addEventListener("click", function (e) {
-                    inputElement.value = this.getElementsByTagName("input")[0].value;
-                    closeAllLists();
-                    onSelect(inputElement.value);
-                });
-                item.classList.add("spotlight-suggestion-item");
-                if (i === currentFocus) {
-                    item.classList.add("spotlight-suggestion-active");
-                }
-                autocompleteList.appendChild(item);
-            }
+    for (let i = 0; i < sortedKeys.length; i++) {
+      const key = sortedKeys[i];
+      const [score, _] = matchScore(this.value, key);
+      if (score >= 0 || !this.value) {
+        const item = document.createElement("DIV");
+        item.innerHTML = key;
+        if (dictionary[key] && previewURL === true) {
+          item.innerHTML += "<br><small style='font-size: 12px'>" + dictionary[key] + "</small>";
         }
-    });
-
-    inputElement.addEventListener("keydown", function (e) {
-        let x = document.getElementById(this.id + "-autocomplete-list");
-        if (x) x = x.getElementsByTagName("div");
-        if (e.keyCode == 40) {
-            currentFocus++;
-            addActive(x);
-        } else if (e.keyCode == 38) {
-            currentFocus--;
-            addActive(x);
-        } else if (e.keyCode == 13) {
-            e.preventDefault();
-            if (currentFocus > -1) {
-                if (x) x[currentFocus].click();
-            } else {
-                onSelect(this.value);
-            }
+        item.innerHTML += "<input type='hidden' value='" + key + "'>";
+        item.addEventListener("click", function (e) {
+          inputElement.value = this.getElementsByTagName("input")[0].value;
+          closeAllLists();
+          onSelect(inputElement.value);
+        });
+        item.classList.add("spotlight-suggestion-item");
+        if (i === currentFocus) {
+          item.classList.add("spotlight-suggestion-active");
         }
-    });
-
-    function addActive(x) {
-        if (!x) return false;
-        removeActive(x);
-        if (currentFocus >= x.length) currentFocus = 0;
-        if (currentFocus < 0) currentFocus = x.length - 1;
-        x[currentFocus].classList.add("spotlight-suggestion-active");
+        autocompleteList.appendChild(item);
+      }
     }
+  });
 
-    function removeActive(x) {
-        for (let i = 0; i < x.length; i++) {
-            x[i].classList.remove("spotlight-suggestion-active");
-        }
+  inputElement.addEventListener("keydown", function (e) {
+    let x = document.getElementById(this.id + "-autocomplete-list");
+    if (x) x = x.getElementsByTagName("div");
+    if (e.keyCode == 40) {
+      currentFocus++;
+      addActive(x);
+    } else if (e.keyCode == 38) {
+      currentFocus--;
+      addActive(x);
+    } else if (e.keyCode == 13) {
+      e.preventDefault();
+      if (currentFocus > -1) {
+        if (x) x[currentFocus].click();
+      } else {
+        onSelect(this.value);
+      }
     }
+  });
 
-    function closeAllLists(elmnt) {
-        const x = document.getElementsByClassName("autocomplete-items");
-        for (let i = 0; i < x.length; i++) {
-            if (elmnt != x[i] && elmnt != inputElement) {
-                x[i].parentNode.removeChild(x[i]);
-            }
-        }
+  function addActive(x) {
+    if (!x) return false;
+    removeActive(x);
+    if (currentFocus >= x.length) currentFocus = 0;
+    if (currentFocus < 0) currentFocus = x.length - 1;
+    x[currentFocus].classList.add("spotlight-suggestion-active");
+  }
+
+  function removeActive(x) {
+    for (let i = 0; i < x.length; i++) {
+      x[i].classList.remove("spotlight-suggestion-active");
     }
+  }
 
-    document.addEventListener("click", function (e) {
-        closeAllLists(e.target);
-    });
+  function closeAllLists(elmnt) {
+    const x = document.getElementsByClassName("autocomplete-items");
+    for (let i = 0; i < x.length; i++) {
+      if (elmnt != x[i] && elmnt != inputElement) {
+        x[i].parentNode.removeChild(x[i]);
+      }
+    }
+  }
+
+  document.addEventListener("click", function (e) {
+    closeAllLists(e.target);
+  });
 }
 
 document.onkeydown = KeyPress;
 
 document.addEventListener("click", function (event) {
-    if (event.target.id != "spotlight") {
-        const spotlight = document.getElementById("spotlight");
-        if (spotlight) {
-            spotlight.style.visibility = "hidden";
-            overlay.style.display = "none";
-        }
+  if (event.target.id != "spotlight") {
+    const spotlight = document.getElementById("spotlight");
+    if (spotlight) {
+      spotlight.style.visibility = "hidden";
+      overlay.style.display = "none";
     }
+  }
 });
 
 let styleSheet = document.createElement("style");
@@ -439,8 +455,7 @@ styleSheet.innerHTML = `
     .spotlight {
         list-style: none;
         font: inherit;
-        font-size: 12px;
-        font-style: italic;
+        font-size: 18px;
         vertical-align: middle;
         border: 0;
         text-shadow: none;
@@ -450,8 +465,8 @@ styleSheet.innerHTML = `
         box-sizing: border-box;
         color: #9f9f9f;
         display: inline;
-        font-weight: 400;
-        height: 24px;
+        font-weight: 600;
+        height: 36px;
         margin: 0;
         outline: none;
         padding: 0 25px 0 10px;
@@ -500,232 +515,289 @@ styleSheet.innerHTML = `
     [class*="spotlight"] {
         font-size: 16px;
     }
+
+    input {
+      list-style: none;
+      margin: 0;
+      font: inherit;
+      font-family: Arial, serif;
+      color: var(--input-color);
+      background: var(--input-background-color);
+      border: 1px solid;
+      border-color: var(--input-border-color);
+      line-height: 14px;
+      height: 14px;
+      border-radius: 5px;
+      text-align: left;
+      padding-top: 4px;
+      padding-right: 5px;
+      padding-bottom: 4px;
+      display: inline-block;
+      vertical-align: middle;
+      padding-left: 5px;
+      width: 212px;
+    }
 `;
 
 document.body.appendChild(styleSheet);
 function createSettingsPage() {
-    // Remove existing content
-    // document.body.innerHTML = '';
+  // Remove existing content
+  // document.body.innerHTML = '';
 
-    const headerRootElement = document.getElementById('header-root');
-    const notifyUser = document.createElement('div');
-    const notifyUserText = document.createElement('h4');
-    notifyUserText.textContent = 'Note. This isn\'t an official page. This page is overwritten by Spotlight Search. And is under construction.';
-    notifyUser.style.color = '#f00';
-    notifyUser.style.marginTop = '20px';
-    notifyUserText.style.fontSize = '12px';
-    notifyUser.appendChild(notifyUserText);
-    headerRootElement.appendChild(notifyUser);
+  const headerRootElement = document.getElementById("header-root");
+  const notifyUser = document.createElement("div");
+  const notifyUserText = document.createElement("h4");
+  notifyUserText.textContent =
+    "Note. This isn't an official page. This page is overwritten by Spotlight Search. And is under construction.";
+  notifyUser.style.color = "#f00";
+  notifyUser.style.marginTop = "20px";
+  notifyUserText.style.fontSize = "12px";
+  notifyUser.appendChild(notifyUserText);
+  headerRootElement.appendChild(notifyUser);
 
-    // Create settings container
-    const settingsContainer = document.createElement('div');
-    // settingsContainer.id = 'spotlight-settings';
-    // settingsContainer.style.padding = '20px';
-    // settingsContainer.style.maxWidth = '800px';
-    // settingsContainer.style.margin = '0 auto';
+  // Create settings container
+  const settingsContainer = document.createElement("div");
+  settingsContainer.appendChild(document.createElement("p"));
+  // settingsContainer.id = 'spotlight-settings';
+  // settingsContainer.style.padding = '20px';
+  // settingsContainer.style.maxWidth = '800px';
+  // settingsContainer.style.margin = '0 auto';
 
-    // Add title
-    // const title = document.createElement('h1');
-    // title.textContent = 'Torn Spotlight Search Settings';
-    // settingsContainer.appendChild(title);
+  // Add title
+  // const title = document.createElement('h1');
+  // title.textContent = 'Torn Spotlight Search Settings';
+  // settingsContainer.appendChild(title);
 
-    // 1. Main Spotlight
-    const mainSpotlightSection = createKeyBindingSection('Main Spotlight', 'mainSpotlight', loadSetting('mainSpotlight', DEFAULT_MAIN_SPOTLIGHT_KEY_COMBINATION));
-    settingsContainer.appendChild(mainSpotlightSection);
+  // const additionalConfig = createOtherSettingsDivision();
+  // settingsContainer.appendChild(additionalConfig);
 
-    // 2. Market Spotlight
-    const marketSpotlightSection = createKeyBindingSection('Market Spotlight', 'marketSpotlight', loadSetting('marketSpotlight', DEFAULT_MARKET_KEY_COMBINATION));
-    settingsContainer.appendChild(marketSpotlightSection);
+  // 1. Main Spotlight
+  const mainSpotlightSection = createKeyBindingSection(
+    "Main Spotlight",
+    "mainSpotlight",
+    loadSetting("mainSpotlight", DEFAULT_MAIN_SPOTLIGHT_KEY_COMBINATION),
+  );
+  settingsContainer.appendChild(mainSpotlightSection);
 
-    // Custom key combinations section
-    const customSection = document.createElement('div');
-    customSection.id = 'custom-key-combinations';
-    const customTitle = document.createElement('h3');
-    customTitle.textContent = 'Custom Key Combinations';
-    customSection.appendChild(customTitle);
+  // 2. Market Spotlight
+  const marketSpotlightSection = createKeyBindingSection(
+    "Market Spotlight",
+    "marketSpotlight",
+    loadSetting("marketSpotlight", DEFAULT_MARKET_KEY_COMBINATION),
+  );
+  settingsContainer.appendChild(marketSpotlightSection);
 
-    // Add button for new custom combination
-    const addButton = document.createElement('button');
-    addButton.textContent = 'Add Custom Combination';
-    addButton.classList.add('torn-btn');
-    addButton.classList.add('btn-small');
-    addButton.addEventListener('click', () => addCustomCombination(customSection));
-    customSection.appendChild(addButton);
+  // Custom key combinations section
+  const customSection = document.createElement("div");
+  customSection.id = "custom-key-combinations";
+  const customTitle = document.createElement("h3");
+  customTitle.textContent = "Custom Key Combinations";
+  customSection.appendChild(customTitle);
 
-    settingsContainer.appendChild(customSection);
+  // Add button for new custom combination
+  const addButton = document.createElement("button");
+  addButton.textContent = "Add Custom Combination";
+  addButton.classList.add("torn-btn");
+  addButton.classList.add("btn-small");
+  addButton.addEventListener("click", () =>
+    addCustomCombination(customSection),
+  );
+  customSection.appendChild(addButton);
 
-    // Load existing custom combinations
-    const customCombinations = loadSetting('customCombinations', {});
-    for (const [key, value] of Object.entries(customCombinations)) {
-        addCustomCombination(customSection, key, value);
-    }
+  settingsContainer.appendChild(customSection);
 
-    // Save button
-    const saveButton = document.createElement('button');
-    saveButton.textContent = 'Save Settings';
-    saveButton.classList.add('torn-btn');
-    saveButton.style.marginTop = '20px';
-    saveButton.addEventListener('click', saveSettings);
-    settingsContainer.appendChild(saveButton);
+  // Load existing custom combinations
+  const customCombinations = loadSetting("customCombinations", {});
+  for (const [key, value] of Object.entries(customCombinations)) {
+    addCustomCombination(customSection, key, value);
+  }
 
-    // Add settings container to body
-    // document.body.appendChild(settingsContainer);
+  // Save button
+  const saveButton = document.createElement("button");
+  saveButton.textContent = "Save Settings";
+  saveButton.classList.add("torn-btn");
+  saveButton.style.marginTop = "20px";
+  saveButton.addEventListener("click", saveSettings);
+  settingsContainer.appendChild(saveButton);
 
-    // Title
-    const titleElement = document.getElementById("skip-to-content");
-    titleElement.innerText = "Spotlight Settings";
+  // Add settings container to body
+  // document.body.appendChild(settingsContainer);
 
-    const errorPageContent = document.getElementsByClassName("main-wrap")[0];
-    const contentWrapper = document.getElementsByClassName("content-wrapper")[0];
-    contentWrapper.removeChild(errorPageContent);
-    contentWrapper.appendChild(settingsContainer);
+  // Title
+  const titleElement = document.getElementById("skip-to-content");
+  titleElement.innerText = "Spotlight Settings";
 
+  const errorPageContent = document.getElementsByClassName("main-wrap")[0];
+  const contentWrapper = document.getElementsByClassName("content-wrapper")[0];
+  contentWrapper.removeChild(errorPageContent);
+  contentWrapper.appendChild(settingsContainer);
 }
 
 function createKeyBindingSection(label, id, defaultValue) {
-    const section = document.createElement('div');
-    section.style.marginBottom = '20px';
+  const section = document.createElement("div");
+  section.style.marginBottom = "20px";
 
-    const sectionLabel = document.createElement('h3');
-    sectionLabel.textContent = label;
-    section.appendChild(sectionLabel);
+  const sectionLabel = document.createElement("h3");
+  sectionLabel.textContent = label;
+  section.appendChild(sectionLabel);
 
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.id = id;
-    input.value = defaultValue;
-    input.addEventListener('keydown', captureKeyCombo);
-    section.appendChild(input);
+  const input = document.createElement("input");
+  input.type = "text";
+  input.id = id;
+  input.value = defaultValue;
+  input.classList.add("input-text");
+  input.addEventListener("keydown", captureKeyCombo);
+  section.appendChild(input);
 
-    return section;
+  return section;
 }
 
-function addCustomCombination(parentElement, existingKey = '', existingValue = '') {
-    const combinationDiv = document.createElement('div');
-    combinationDiv.style.marginBottom = '10px';
+function addCustomCombination(
+  parentElement,
+  existingKey = "",
+  existingValue = "",
+) {
+  const combinationDiv = document.createElement("div");
+  combinationDiv.style.marginBottom = "10px";
 
-    const keyInput = document.createElement('input');
-    keyInput.type = 'text';
-    keyInput.placeholder = 'Key Combination';
-    keyInput.value = existingKey;
-    keyInput.addEventListener('keydown', captureKeyCombo);
-    combinationDiv.appendChild(keyInput);
+  const keyInput = document.createElement("input");
+  keyInput.type = "text";
+  keyInput.placeholder = "Key Combination";
+  keyInput.value = existingKey;
+  keyInput.addEventListener("keydown", captureKeyCombo);
+  combinationDiv.appendChild(keyInput);
 
-    const selectElement = document.createElement('select');
-    selectElement.style.marginLeft = '10px';
-    
-    // Add options from urlDictionary
-    for (const key of Object.keys(urlDictionary)) {
-        const option = document.createElement('option');
-        option.value = key;
-        option.textContent = key;
-        option.classList.add('item')
-        selectElement.appendChild(option);
+  const selectElement = document.createElement("select");
+  selectElement.style.marginLeft = "10px";
+
+  // Add options from urlDictionary
+  for (const key of Object.keys(urlDictionary)) {
+    const option = document.createElement("option");
+    option.value = key;
+    option.textContent = key;
+    option.classList.add("item");
+    selectElement.appendChild(option);
+  }
+
+  // Add 'Other' option
+  const otherOption = document.createElement("option");
+  otherOption.value = "other";
+  otherOption.textContent = "Other";
+  selectElement.appendChild(otherOption);
+
+  combinationDiv.appendChild(selectElement);
+
+  const urlInput = document.createElement("input");
+  urlInput.type = "text";
+  urlInput.placeholder = "Custom URL";
+  urlInput.style.display = "none";
+  urlInput.style.marginLeft = "10px";
+  combinationDiv.appendChild(urlInput);
+
+  if (existingValue && !urlDictionary[existingValue]) {
+    selectElement.value = "other";
+    urlInput.style.display = "inline-block";
+    urlInput.value = existingValue;
+  } else if (existingValue) {
+    selectElement.value = existingValue;
+  }
+
+  selectElement.addEventListener("change", () => {
+    if (selectElement.value === "other") {
+      urlInput.style.display = "inline-block";
+    } else {
+      urlInput.style.display = "none";
     }
+  });
 
-    // Add 'Other' option
-    const otherOption = document.createElement('option');
-    otherOption.value = 'other';
-    otherOption.textContent = 'Other';
-    selectElement.appendChild(otherOption);
+  const removeButton = document.createElement("button");
+  removeButton.textContent = "Remove";
+  removeButton.style.marginLeft = "10px";
+  removeButton.classList.add("torn-btn");
+  removeButton.classList.add("btn-small");
+  removeButton.addEventListener("click", () =>
+    parentElement.removeChild(combinationDiv),
+  );
+  combinationDiv.appendChild(removeButton);
 
-    combinationDiv.appendChild(selectElement);
-
-    const urlInput = document.createElement('input');
-    urlInput.type = 'text';
-    urlInput.placeholder = 'Custom URL';
-    urlInput.style.display = 'none';
-    urlInput.style.marginLeft = '10px';
-    combinationDiv.appendChild(urlInput);
-
-    if (existingValue && !urlDictionary[existingValue]) {
-        selectElement.value = 'other';
-        urlInput.style.display = 'inline-block';
-        urlInput.value = existingValue;
-    } else if (existingValue) {
-        selectElement.value = existingValue;
-    }
-
-    selectElement.addEventListener('change', () => {
-        if (selectElement.value === 'other') {
-            urlInput.style.display = 'inline-block';
-        } else {
-            urlInput.style.display = 'none';
-        }
-    });
-
-    const removeButton = document.createElement('button');
-    removeButton.textContent = 'Remove';
-    removeButton.style.marginLeft = '10px';
-    removeButton.classList.add('torn-btn');
-    removeButton.classList.add('btn-small');
-    removeButton.addEventListener('click', () => parentElement.removeChild(combinationDiv));
-    combinationDiv.appendChild(removeButton);
-
-    parentElement.insertBefore(combinationDiv, parentElement.lastElementChild);
+  parentElement.insertBefore(combinationDiv, parentElement.lastElementChild);
 }
 
 function saveSettings() {
-    const mainSpotlight = document.getElementById('mainSpotlight').value;
-    const marketSpotlight = document.getElementById('marketSpotlight').value;
+  const mainSpotlight = document.getElementById("mainSpotlight").value;
+  const marketSpotlight = document.getElementById("marketSpotlight").value;
 
-    saveSetting('mainSpotlight', mainSpotlight);
-    saveSetting('marketSpotlight', marketSpotlight);
+  saveSetting("mainSpotlight", mainSpotlight);
+  saveSetting("marketSpotlight", marketSpotlight);
 
-    const customCombinations = {};
-    const customSection = document.getElementById('custom-key-combinations');
-    const combinationDivs = customSection.getElementsByTagName('div');
+  const customCombinations = {};
+  const customSection = document.getElementById("custom-key-combinations");
+  const combinationDivs = customSection.getElementsByTagName("div");
 
-    for (const div of combinationDivs) {
-        const keyCombo = div.getElementsByTagName('input')[0].value;
-        const selectElement = div.getElementsByTagName('select')[0];
-        const urlInput = div.getElementsByTagName('input')[1];
+  for (const div of combinationDivs) {
+    const keyCombo = div.getElementsByTagName("input")[0].value;
+    const selectElement = div.getElementsByTagName("select")[0];
+    const urlInput = div.getElementsByTagName("input")[1];
 
-        if (keyCombo) {
-            if (selectElement.value === 'other') {
-                customCombinations[keyCombo] = urlInput.value;
-            } else {
-                customCombinations[keyCombo] = selectElement.value;
-            }
-        }
+    if (keyCombo) {
+      if (selectElement.value === "other") {
+        customCombinations[keyCombo] = urlInput.value;
+      } else {
+        customCombinations[keyCombo] = selectElement.value;
+      }
     }
+  }
 
-    saveSetting('customCombinations', customCombinations);
+  saveSetting("customCombinations", customCombinations);
 
-    alert('Settings saved successfully!');
+  alert("Settings saved successfully!");
 }
 
 function loadSetting(key, defaultValue) {
-    const value = localStorage.getItem(`spotlightSearch_${key}`);
-    return value !== null ? JSON.parse(value) : defaultValue;
+  const value = localStorage.getItem(`spotlightSearch_${key}`);
+  return value !== null ? JSON.parse(value) : defaultValue;
 }
 
 function saveSetting(key, value) {
-    localStorage.setItem(`spotlightSearch_${key}`, JSON.stringify(value));
+  localStorage.setItem(`spotlightSearch_${key}`, JSON.stringify(value));
 }
 
 function captureKeyCombo(event) {
-    event.preventDefault();
-    const key = event.key.toUpperCase();
-    const combo = [];
-    if (event.ctrlKey) combo.push('Ctrl');
-    if (event.altKey) combo.push('Alt');
-    if (event.shiftKey) combo.push('Shift');
-    combo.push(key);
-    event.target.value = combo.join('+');
+  event.preventDefault();
+  const key = event.key.toUpperCase();
+  const combo = [];
+  if (event.ctrlKey) combo.push("Ctrl");
+  if (event.altKey) combo.push("Alt");
+  if (event.shiftKey) combo.push("Shift");
+  combo.push(key);
+  event.target.value = combo.join("+");
 }
 
 // Add this near the top of your script
 if (window.location.pathname === SETTINGS_PAGE) {
-    styleSheet += `
+  styleSheet += `
     * {
     font-family: 'Bricolage Grotesque';
     }
-    `
-    createSettingsPage();
-    return;
+    `;
+  createSettingsPage();
+  return;
 }
 
-marketItems = {
-    "Xanax": "xanax",
+function createOtherSettingsDivision() {
+  const mainDivision = document.createElement("div");
+
+  // Preview URL
+  const previewURL = document.createElement("div");
+  const previewURLCheckbox = document.createElement("input");
+  previewURLCheckbox.type = "checkbox";
+  previewURLCheckbox.id = "previewURLCheckbox";
+  previewURLCheckbox.checked = loadSetting("previewURL", true);
+  previewURL.appendChild(previewURLCheckbox);
+  previewURL.appendChild(document.createTextNode("Preview URL"));
+
+  // Add all childs
+  mainDivision.appendChild(previewURL);
+
+  return mainDivision
 }
