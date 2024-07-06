@@ -67,8 +67,6 @@ let urlDictionary = {
   "(Casino) Bookie": "https://www.torn.com/page.php?sid=bookie",
   "(Casino) Lottery": "https://www.torn.com/page.php?sid=lottery",
   Craps: "https://www.torn.com/page.php?sid=craps",
-  "(Faction) Forum":
-    "https://www.torn.com/forums.php#/p=forums&f=999&b=1&a=1149",
   "(Faction) Warfare": "https://www.torn.com/page.php?sid=factionWarfare",
   "Bits 'n' Bobs": "https://www.torn.com/shops.php?step=bitsnbobs",
   Bounties: "https://www.torn.com/bounties.php",
@@ -125,7 +123,8 @@ let urlDictionary = {
   "Recycling Center": "https://www.torn.com/shops.php?step=recyclingcenter",
   "Super Store": "https://www.torn.com/shops.php?step=super",
   "Token Shop": "https://www.torn.com/token_shop.php",
-  "(Faction) Armory": "https://www.torn.com/factions.php?step=your#/tab=armoury",
+  "(Faction) Armory":
+    "https://www.torn.com/factions.php?step=your#/tab=armoury",
   Keno: "https://www.torn.com/page.php?sid=keno",
   "Bugs & Issues": "https://www.torn.com/forums.php#/p=forums&f=19",
   "Spin the Wheel": "https://www.torn.com/page.php?sid=spinTheWheel",
@@ -237,11 +236,16 @@ function showSpotlight(dictionary, onSelect, previewURL = true) {
   spotlight.value = "";
   spotlight.focus();
 
-  setupAutocomplete(spotlight, dictionary, (selectedKey) => {
-    document.body.removeChild(spotlightDiv);
-    overlay.style.display = "none";
-    onSelect(selectedKey);
-  }, previewURL);
+  setupAutocomplete(
+    spotlight,
+    dictionary,
+    (selectedKey) => {
+      document.body.removeChild(spotlightDiv);
+      overlay.style.display = "none";
+      onSelect(selectedKey);
+    },
+    previewURL,
+  );
 
   spotlight.dispatchEvent(new Event("input"));
   document.addEventListener("click", function closeSpotlight(event) {
@@ -285,15 +289,19 @@ function KeyPress(e) {
 
   // Check for market spotlight
   if (checkKeyCombo(marketSpotlight)) {
-    showSpotlight(marketItems, (selectedItem) => {
-      const marketSearchUrl =
-        "https://www.torn.com/imarket.php#/p=shop&step=shop&type=&searchname={q}";
-      const url = marketSearchUrl.replace(
-        "{q}",
-        encodeURIComponent(selectedItem),
-      );
-      window.location.href = url;
-    }, previewURL = false);
+    showSpotlight(
+      marketItems,
+      (selectedItem) => {
+        const marketSearchUrl =
+          "https://www.torn.com/imarket.php#/p=shop&step=shop&type=&searchname={q}";
+        const url = marketSearchUrl.replace(
+          "{q}",
+          encodeURIComponent(selectedItem),
+        );
+        window.location.href = url;
+      },
+      (previewURL = false),
+    );
     return;
   }
 
@@ -351,7 +359,12 @@ function sortKeys(input, dictionary) {
 }
 
 let currentFocus = 0;
-function setupAutocomplete(inputElement, dictionary, onSelect, previewURL = true) {
+function setupAutocomplete(
+  inputElement,
+  dictionary,
+  onSelect,
+  previewURL = true,
+) {
   let currentFocus = 0;
 
   inputElement.addEventListener("input", function (e) {
@@ -374,7 +387,10 @@ function setupAutocomplete(inputElement, dictionary, onSelect, previewURL = true
         const item = document.createElement("DIV");
         item.innerHTML = key;
         if (dictionary[key] && previewURL === true) {
-          item.innerHTML += "<br><small style='font-size: 12px'>" + dictionary[key] + "</small>";
+          item.innerHTML +=
+            "<br><small style='font-size: 12px'>" +
+            dictionary[key] +
+            "</small>";
         }
         item.innerHTML += "<input type='hidden' value='" + key + "'>";
         item.addEventListener("click", function (e) {
@@ -516,7 +532,7 @@ styleSheet.innerHTML = `
         font-size: 16px;
     }
 
-    input {
+    .spotlight-input {
       list-style: none;
       margin: 0;
       font: inherit;
@@ -646,6 +662,7 @@ function createKeyBindingSection(label, id, defaultValue) {
   input.id = id;
   input.value = defaultValue;
   input.classList.add("input-text");
+  input.classList.add("spotlight-input");
   input.addEventListener("keydown", captureKeyCombo);
   section.appendChild(input);
 
@@ -664,6 +681,7 @@ function addCustomCombination(
   keyInput.type = "text";
   keyInput.placeholder = "Key Combination";
   keyInput.value = existingKey;
+  keyInput.classList.add("spotlight-input");
   keyInput.addEventListener("keydown", captureKeyCombo);
   combinationDiv.appendChild(keyInput);
 
@@ -692,6 +710,7 @@ function addCustomCombination(
   urlInput.placeholder = "Custom URL";
   urlInput.style.display = "none";
   urlInput.style.marginLeft = "10px";
+  urlInput.classList.add("spotlight-input");
   combinationDiv.appendChild(urlInput);
 
   if (existingValue && !urlDictionary[existingValue]) {
@@ -799,5 +818,5 @@ function createOtherSettingsDivision() {
   // Add all childs
   mainDivision.appendChild(previewURL);
 
-  return mainDivision
+  return mainDivision;
 }
