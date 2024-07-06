@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Torn Spotlight Search
 // @namespace    http://tampermonkey.net/
-// @version      beta-2.1
+// @version      beta-2.2
 // @description  Navigate Torn Faster
 // @author       Jayam Patel
 // @match        https://www.torn.com/*
@@ -282,7 +282,7 @@ function KeyPress(e) {
   }
 
   // Check for main spotlight
-  let keys = initializeSpotlightDictionary()
+  let keys = initializeSpotlightDictionary();
   if (checkKeyCombo(mainSpotlight)) {
     showSpotlight(keys, (selectedValue) => {
       window.location.href = keys[selectedValue];
@@ -997,7 +997,7 @@ function initializeSpotlightDictionary() {
 
 function createDonationLinks() {
   const donationLinks = document.createElement("div");
-  
+
   const buyMeACoffee = document.createElement("a");
   buyMeACoffee.href = "https://www.buymeacoffee.com/jayampatel";
   buyMeACoffee.target = "_blank";
@@ -1013,7 +1013,8 @@ function createDonationLinks() {
   orBuySomeXanax.textContent = "Or buy some Xanax";
 
   const notice = document.createElement("p");
-  notice.textContent = "You are donating to me (developer of this extension) and to Torn.";
+  notice.textContent =
+    "You are donating to me (developer of this extension) and to Torn.";
   notice.style.marginTop = "10px";
   notice.style.marginBottom = "10px";
   notice.style.fontSize = "12px";
