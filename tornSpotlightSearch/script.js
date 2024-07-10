@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Torn Spotlight Search
 // @namespace    http://tampermonkey.net/
-// @version      beta-2.3
+// @version      beta-2.3.1
 // @description  Navigate Torn Faster
 // @author       Jayam Patel
 // @match        https://www.torn.com/*
@@ -2080,7 +2080,7 @@ function createDonationLinks() {
 
   const notice = document.createElement("p");
   notice.textContent =
-    "You are donating to me (developer of this extension) and to Torn.";
+    "You are donating to me (developer of this extension) and NOT to Torn.";
   notice.style.marginTop = "10px";
   notice.style.marginBottom = "10px";
   notice.style.fontSize = "12px";
