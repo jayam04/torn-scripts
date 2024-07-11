@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Torn Spotlight Search
 // @namespace    http://tampermonkey.net/
-// @version      beta-2.3.1
+// @version      beta-2.4
 // @description  Navigate Torn Faster
 // @author       Jayam Patel
 // @match        https://www.torn.com/*
@@ -2091,3 +2091,24 @@ function createDonationLinks() {
   donationLinks.appendChild(notice);
   return donationLinks;
 }
+
+/**
+ * Adds spotlight icon is Status Icons for quick navigation to Spotlight Settings.
+ */
+function addSpotlightIconInStatusIcons() {
+  const statusIconsLinks = document.querySelector('[class^="status-icons"]');
+  if (statusIconsLinks.length == 0) return;
+
+  const iconItem = document.createElement("li");
+  iconItem.id = "spotlight_icon_xx";
+  const iconHref = document.createElement("a");
+  iconHref.href = SETTINGS_PAGE;
+  iconHref.ariaLabel = "Spotlight Settings";
+  iconItem.appendChild(iconHref);
+  iconItem.style.backgroundImage =
+    'url("https://raw.githubusercontent.com/jayam04/torn-scripts/master/tornSpotlightSearch/icon.png")';
+  iconItem.style.backgroundSize = "100%";
+  statusIconsLinks.appendChild(iconItem);
+}
+
+addSpotlightIconInStatusIcons();
