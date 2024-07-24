@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Constants for Torn (for Developers)
+// @name         Constants for Torn Scripts (for Developers)
 // @namespace    http://tampermonkey.net/
 // @version      1.0
 // @description  Useful constants for Torn
