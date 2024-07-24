@@ -9,7 +9,7 @@
 // @icon         https://raw.githubusercontent.com/jayam04/torn-scripts/master/tornSpotlightSearch/icon.png
 // @license      Apache License 2.0
 // @grant        none
-// @require      https://raw.githubusercontent.com/jayam04/torn-scripts/master/tornUIElements/script.js
+// @require https://update.greasyfork.org/scripts/501645/1416051/Torn%20UI%20Elements%20%28for%20Developers%29.js
 // ==/UserScript==
 
 // Default Settings
