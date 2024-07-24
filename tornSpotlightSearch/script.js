@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Torn Spotlight Search
 // @namespace    http://tampermonkey.net/
-// @version      beta-2.4
+// @version      beta-2.5.1
 // @description  Navigate Torn Faster
 // @author       Jayam Patel
 // @match        https://www.torn.com/*
@@ -9,6 +9,7 @@
 // @icon         https://raw.githubusercontent.com/jayam04/torn-scripts/master/tornSpotlightSearch/icon.png
 // @license      Apache License 2.0
 // @grant        none
+// @require      https://raw.githubusercontent.com/jayam04/torn-scripts/master/tornUIElements/script.js
 // ==/UserScript==
 
 // Default Settings
@@ -118,7 +119,6 @@ let urlDictionary = {
   "Personal Stats": "https://www.torn.com/personalstats.php",
   "Property Vault": "https://www.torn.com/properties.php#/p=options&tab=vault",
   "Manage Bazaar": "https://www.torn.com/bazaar.php#/manage",
-  "Visitors Center": "https://www.torn.com/wiki",
   "Estate Agents": "https://www.torn.com/estateagents.php",
   "Recycling Center": "https://www.torn.com/shops.php?step=recyclingcenter",
   "Super Store": "https://www.torn.com/shops.php?step=super",
@@ -2092,23 +2092,8 @@ function createDonationLinks() {
   return donationLinks;
 }
 
-/**
- * Adds spotlight icon is Status Icons for quick navigation to Spotlight Settings.
- */
-function addSpotlightIconInStatusIcons() {
-  const statusIconsLinks = document.querySelector('[class^="status-icons"]');
-  if (statusIconsLinks.length == 0) return;
-
-  const iconItem = document.createElement("li");
-  iconItem.id = "spotlight_icon_xx";
-  const iconHref = document.createElement("a");
-  iconHref.href = SETTINGS_PAGE;
-  iconHref.ariaLabel = "Spotlight Settings";
-  iconItem.appendChild(iconHref);
-  iconItem.style.backgroundImage =
-    'url("https://raw.githubusercontent.com/jayam04/torn-scripts/master/tornSpotlightSearch/icon.png")';
-  iconItem.style.backgroundSize = "100%";
-  statusIconsLinks.appendChild(iconItem);
-}
-
-addSpotlightIconInStatusIcons();
+// Add Spotlight Icon in Status Icons
+addIconInStatusIcons(
+  SETTINGS_PAGE,
+  "https://raw.githubusercontent.com/jayam04/torn-scripts/master/tornSpotlightSearch/icon.png",
+);

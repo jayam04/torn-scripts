@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Torn UI Elements
+// @name         Torn UI Elements (for Developers)
 // @namespace    http://tampermonkey.net/
 // @version      beta-0.1
 // @description  Develop Torn Scripts Faster
