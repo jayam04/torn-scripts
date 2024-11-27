@@ -13,16 +13,16 @@
 
 /**
  * Adds icon to Status Icons for quick navigation.
- * 
+ *
  * @param {string} href - The href of the link to be added.
  * @param {string} iconURL - The URL of the icon to be added.
- * 
+ *
  * @returns {number} - 0 if successful, 1 if unsuccessful.
  */
 function addIconInStatusIcons(href, iconURL) {
     const statusIconsLinks = document.querySelector('[class^="status-icons"]');
     if (statusIconsLinks.length == 0) return 1;
-  
+
     const iconItem = document.createElement("li");
     const iconHref = document.createElement("a");
     iconHref.href = href;
@@ -32,4 +32,4 @@ function addIconInStatusIcons(href, iconURL) {
     iconItem.style.backgroundSize = "100%";
     statusIconsLinks.appendChild(iconItem);
     return 0;
-  }
+}

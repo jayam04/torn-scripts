@@ -13,7 +13,7 @@
 // ==/UserScript==
 
 function main() {
-  console.log("Torn Filters Loaded");
+    console.log("Torn Filters Loaded");
 }
 
 main();

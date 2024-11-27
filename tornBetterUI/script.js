@@ -13,18 +13,18 @@
 // ==/UserScript==
 
 function realignTornUI() {
-  const mainContainer = document.getElementById("mainContainer");
-  mainContainer.style.marginLeft = "20px";
+    const mainContainer = document.getElementById("mainContainer");
+    mainContainer.style.marginLeft = "20px";
 }
 
 function updateFont() {
-  const mainContainer = document.getElementById("mainContainer");
-  mainContainer.style.fontFamily = "Monaco, monospace";
+    const mainContainer = document.getElementById("mainContainer");
+    mainContainer.style.fontFamily = "Monaco, monospace";
 }
 
 function main() {
-  realignTornUI();
-  updateFont();
+    realignTornUI();
+    updateFont();
 }
 
 main();
