@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Torn Better UI
 // @namespace    http://tampermonkey.net/
-// @version      alpha-1.0
+// @version      alpha-1.1
 // @description  Make Torn Beautiful
 // @author       Jayam Patel
 // @match        https://www.torn.com/*
@@ -15,16 +15,30 @@
 function realignTornUI() {
     const mainContainer = document.getElementById("mainContainer");
     mainContainer.style.marginLeft = "20px";
+
+    // TODO: make this more robust.
+    // TODO: make this more efficient, currently, it takes time and shift is visible on every page reload.
+    const mainContentContainer =
+        document.getElementsByClassName("content-wrapper")[0];
+    const topHeaderContainer =
+        document.getElementsByClassName("header-wrapper-top")[0];
+    const topHeaderContainerChild = topHeaderContainer.children[0];
+    topHeaderContainerChild.style.marginLeft = "20px";
+
+    const bottomHeaderContainer = document.getElementsByClassName(
+        "header-wrapper-bottom"
+    )[0];
+    const bottomHeaderContainerChild = bottomHeaderContainer.children[0];
+    bottomHeaderContainerChild.style.marginLeft = "20px";
 }
 
 function updateFont() {
     const mainContainer = document.getElementById("mainContainer");
-    mainContainer.style.fontFamily = "Monaco, monospace";
+    mainContainer.style.fontFamily = "Pangolin";
 }
 
 function main() {
     realignTornUI();
-    updateFont();
 }
 
 main();
